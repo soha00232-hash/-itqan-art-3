@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة إتقان للتربية الفنية</title>
+<style>
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#fbf8ff;color:#30283a}
+header{background:#fff;padding:18px;text-align:center;border-bottom:1px solid #eee}
+.logo{font-size:38px}.wrap{max-width:820px;margin:auto;padding:16px}
+.hero,.card{background:#fff;border-radius:26px;padding:22px;margin:15px 0;box-shadow:0 8px 25px #6d4b8b18}
+.hero{text-align:center;background:linear-gradient(135deg,#dec1ff,#ffb7dc)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+a{text-decoration:none;color:inherit}.navcard{text-align:center;display:block}.navcard span{font-size:42px;display:block}
+.section{display:none}#home{display:block}
+.navbtn{width:100%;border:0;background:transparent;font:inherit;color:inherit;cursor:pointer;padding:0;text-align:inherit}
+.btn{display:inline-block;border-radius:16px;padding:14px 18px;background:#efe2ff;margin:5px 0}
+.lesson-card{text-align:center}.icon{font-size:58px}.box{background:#faf4ff;border-radius:18px;padding:17px;line-height:1.9;margin:12px 0}
+details{background:#fff;border-radius:24px;padding:18px;margin:15px 0;box-shadow:0 8px 25px #6d4b8b18}
+summary{cursor:pointer;font-size:21px;font-weight:700;list-style:none;text-align:center}
+summary::-webkit-details-marker{display:none}
+.choice{display:block;width:100%;border:0;border-radius:15px;padding:14px;margin:8px 0;font-size:16px;background:#f1e7ff;cursor:pointer;font-family:inherit;color:#30283a}.choice.correct{background:#dff6e5}.choice.wrong{background:#ffe4e4}
+@media(max-width:560px){.wrap{padding:12px}.grid{grid-template-columns:1fr 1fr}.card{padding:18px}}
+
+.answer-area{margin:10px 0 18px;padding:14px;border-radius:18px;background:#fff8fc;border:1px dashed #d8b8ea}
+.answer-area textarea{width:100%;min-height:82px;border:1px solid #ddd;border-radius:14px;padding:12px;font-family:inherit;font-size:16px;resize:vertical}
+.answer-area label{display:block;font-weight:700;margin-bottom:8px}
+
+.login-form{display:grid;gap:12px;margin-top:16px}.login-form select,.login-form input{width:100%;padding:14px;border:1px solid #ddd;border-radius:14px;font-family:inherit;font-size:16px;background:#fff;color:#30283a}.login-submit{width:100%;border:0;border-radius:16px;padding:14px 18px;background:#dec1ff;font-family:inherit;font-size:17px;font-weight:700;color:#30283a;cursor:pointer}.login-msg{margin-top:12px;padding:14px;border-radius:14px;background:#faf4ff;display:none}.student-welcome{text-align:center}.student-badge{display:inline-block;background:#f4eaff;border-radius:999px;padding:8px 14px;margin:5px}.logout-btn{border:0;background:#ffe8ef;color:#7a3150;border-radius:14px;padding:10px 14px;font-family:inherit;cursor:pointer}
+</style>
+</head>
+<body>
+<header><div class="logo">🎨</div><b>إتقان</b><div>منصة التربية الفنية | الصف الثالث الابتدائي</div></header>
+<main class="wrap">
+
+<section id="home">
+<div class="hero"><h1>أهلًا بكِ في منصة إتقان 🎨</h1><p>تعلمي، جربي، وشاركي إبداعك.</p></div>
+<div class="grid">
+<button class="card navcard navbtn" type="button" onclick="showSection('student')"><span>👧</span><b>دخول الطالبة</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('family')"><span>🤝</span><b>شراكة الأسرة</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('star')"><span>⭐</span><b>نجمة إتقان</b></button>
+</div>
+</section>
+
+<section id="student" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+<div class="card" id="loginCard">
+<h2>👧 دخول الطالبة</h2>
+<p>اختاري فصلك واكتبي اسمك الثلاثي ثم اضغطي دخول.</p>
+<div class="login-form">
+<label><b>الفصل</b></label>
+<select id="studentClass">
+<option value="">اختاري الفصل</option>
+<option value="ثالث/١">ثالث/١</option>
+<option value="ثالث/٣">ثالث/٣</option>
+</select>
+<label><b>اسم الطالبة الثلاثي</b></label>
+<input id="studentName" type="text" autocomplete="name" placeholder="اكتبي اسمك الثلاثي">
+<button class="login-submit" type="button" onclick="studentLogin()">دخول 🎨</button>
+<div id="loginMsg" class="login-msg"></div>
+</div>
+</div>
+<div class="card student-welcome" id="studentWelcome" style="display:none">
+<div style="font-size:48px">🌟</div>
+<h2 id="welcomeName">أهلًا بكِ</h2>
+<div><span class="student-badge" id="welcomeClass"></span></div>
+<p>تم تسجيل دخولك بنجاح. يمكنك الآن البدء بالدروس والاختبارات.</p>
+<button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button>
+<div style="margin-top:12px"><button class="logout-btn" type="button" onclick="studentLogout()">تغيير الطالبة</button></div>
+</div>
+</section>
+
+<section id="lessons" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+<div class="card"><h2>📚 الدروس والاختبارات</h2><p>اضغطي على بطاقة الدرس لفتحه:</p></div>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('sketch')"><div class="icon">✏️</div><h2>درس الاسكتش</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('folk')"><div class="icon">🏺</div><h2>الزخرفة البدائية والشعبية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+
+</section>
+
+<section id="sketch" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>✏️ درس الاسكتش</h1><p>تعلمي الفكرة ثم جربيها.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تتعرف الطالبة على مفهوم الاسكتش وتطبقه بصورة مبسطة.</div>
+<h2>💡 ما الاسكتش؟</h2><p>رسم أولي سريع بخطوط بسيطة يساعد الفنانة على تسجيل فكرتها قبل إضافة التفاصيل.</p>
+<h2>🎨 المطلوب من الدرس</h2><div class="box">ارسمي اسكتشًا بسيطًا باستخدام خطوط خفيفة، ثم طوريه إلى رسم أكثر اكتمالًا.</div></div>
+
+<div class="card">
+<h2>⭐ اختبار الدرس</h2>
+<p><b>السؤال الأول: أي وصف يناسب الاسكتش؟</b> <span>(درجة واحدة)</span></p>
+<button type="button" class="choice" onclick="gradeQ(this,1,false)">لوحة مكتملة بالتفاصيل والألوان</button>
+<button type="button" class="choice" onclick="gradeQ(this,1,true)">رسم سريع بخطوط بسيطة</button>
+<button type="button" class="choice" onclick="gradeQ(this,1,false)">صورة مطبوعة جاهزة</button>
+<div id="q1msg" class="box" style="display:none"></div>
+
+<p><b>السؤال الثاني: ما الخطوة الأولى عند رسم الاسكتش؟</b> <span>(درجة واحدة)</span></p>
+<button type="button" class="choice" onclick="gradeQ(this,2,true)">ألاحظ الشكل</button>
+<button type="button" class="choice" onclick="gradeQ(this,2,false)">ألون الرسم كاملًا</button>
+<button type="button" class="choice" onclick="gradeQ(this,2,false)">أضيف تفاصيل كثيرة مباشرة</button>
+<div id="q2msg" class="box" style="display:none"></div>
+
+<button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showScore()">إظهار الدرجة</button>
+<div id="scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div>
+</div>
+
+<div class="card"><h2>🌟 إنجازي</h2><div class="box">أحسنتِ يا فنانة، لقد أنهيتِ درس الاسكتش بنجاح.</div></div>
+</section>
+
+<section id="folk" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🏺 الزخرفة البدائية والشعبية</h1><p>نتعرف على الزخارف ونلاحظ أشكالها ثم نبتكر زخرفة بسيطة.</p></div>
+
+<div class="card">
+<h2>🎯 الهدف</h2>
+<div class="box">أن تتعرف الطالبة على الزخرفة البدائية والشعبية، وتميز بعض أشكالها، وتستفيد منها في تكوين زخرفي بسيط.</div>
+<h2>💡 فكرة الدرس</h2>
+<p>الزخارف من الفنون التي استخدمها الإنسان لتجميل الأشياء من حوله، وتظهر في أشكال وخطوط ورموز ونقوش متنوعة.</p>
+</div>
+
+<details>
+<summary>🎮 لعبة: أيها زخرفة؟</summary>
+<p>اختاري الوصف الأقرب للزخرفة:</p>
+<details><summary class="choice">أشكال وخطوط تتكرر لتجميل السطح</summary><div class="box">✅ أحسنتِ!</div></details>
+<details><summary class="choice">كتابة مسألة حسابية</summary><div class="box">❌ حاولي مرة أخرى.</div></details>
+<details><summary class="choice">صورة فوتوغرافية فقط</summary><div class="box">❌ حاولي مرة أخرى.</div></details>
+</details>
+<div class="answer-area"><label>✍️ حلي هنا:</label><textarea placeholder="اكتبي إجابتك هنا..."></textarea></div>
+
+<div class="card">
+<h2>👀 لاحظي واكتشفي</h2>
+<div class="box">ابحثي في البيئة من حولك عن خطوط أو أشكال أو نقوش زخرفية، ثم صفي الشكل الذي أعجبك.</div>
+<div class="answer-area"><label>✍️ حلي هنا:</label><textarea placeholder="صفي الشكل الذي أعجبك..."></textarea></div>
+<h2>🎨 تحدي الفنانة</h2>
+<div class="box">ابتكري وحدة زخرفية بسيطة من خط أو شكل، ثم كرريها لتكوين شريط زخرفي جميل.</div>
+<div class="answer-area">
+<label>📸 ضعي صورة عملك هنا:</label>
+<input type="file" accept="image/*" onchange="previewArt(this)" style="width:100%;padding:12px;background:white;border:1px solid #ddd;border-radius:14px">
+<img id="artPreview" alt="معاينة عمل الطالبة" style="display:none;width:100%;max-height:320px;object-fit:contain;margin-top:12px;border-radius:16px">
+</div>
+</div>
+</section>
+
+<section id="family" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>🤝 شراكة الأسرة</h2><p>مساحة لمشاركة الأسرة في أنشطة فنية منزلية خفيفة.</p></div></section>
+<section id="gallery" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>🎨 مبدعات</h2><p>هنا تُعرض أعمال الطالبات المبدعة وسجلات الإنجاز للصف الثالث.</p></div></section>
+<section id="star" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>⭐ نجمة إتقان</h2><p>مساحة لعرض الأعمال المتميزة.</p></div></section>
+
+</main>
+<script>
+function showSection(id){
+  document.querySelectorAll('main > section').forEach(s=>s.style.display='none');
+  const target=document.getElementById(id);
+  if(target){target.style.display='block'; window.scrollTo({top:0,behavior:'smooth'});}
+}
+
+const quizAnswers = {1:null, 2:null};
+
+function gradeQ(btn,q,isCorrect){
+  const card = btn.closest('.card');
+  const questionButtons = Array.from(card.querySelectorAll(`button[onclick*="gradeQ(this,${q},"]`));
+  questionButtons.forEach(b=>b.classList.remove('correct','wrong'));
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  quizAnswers[q] = isCorrect;
+  const msg = document.getElementById('q'+q+'msg');
+  msg.style.display='block';
+  msg.textContent = isCorrect ? '✅ أحسنتِ! إجابة صحيحة.' : '❌ حاولي مرة أخرى.';
+}
+
+function showScore(){
+  const box=document.getElementById('scoreBox');
+  box.style.display='block';
+  if(quizAnswers[1]===null || quizAnswers[2]===null){
+    box.textContent='🌷 أجيبي عن السؤالين أولًا ثم اعرضي الدرجة.';
+    return;
+  }
+  const score=(quizAnswers[1]?1:0)+(quizAnswers[2]?1:0);
+  box.textContent = score===2 ? '🌟 درجتك 2 من 2 — ممتازة يا فنانة!' : `درجتك ${score} من 2 — حاولي مرة أخرى لتحصلي على الدرجة كاملة.`;
+}
+
+function previewArt(input){
+ const img=document.getElementById('artPreview');
+ if(input.files && input.files[0]){
+   img.src=URL.createObjectURL(input.files[0]);
+   img.style.display='block';
+ }
+}
+
+function normalizeArabicName(name){
+  return name.trim().replace(/\s+/g,' ');
+}
+function studentLogin(){
+  const className=document.getElementById('studentClass').value;
+  const name=normalizeArabicName(document.getElementById('studentName').value);
+  const msg=document.getElementById('loginMsg');
+  msg.style.display='block';
+  if(!className){msg.textContent='🌷 اختاري الفصل أولًا.';return;}
+  const parts=name.split(' ').filter(Boolean);
+  if(parts.length<3){msg.textContent='🌷 اكتبي اسم الطالبة الثلاثي.';return;}
+  localStorage.setItem('itqanStudent',JSON.stringify({name:name,className:className}));
+  msg.textContent='✅ تم تسجيل الدخول بنجاح.';
+  renderStudentLogin();
+}
+function renderStudentLogin(){
+  let data=null;
+  try{data=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  const loginCard=document.getElementById('loginCard');
+  const welcome=document.getElementById('studentWelcome');
+  if(data && data.name && data.className){
+    loginCard.style.display='none';
+    welcome.style.display='block';
+    document.getElementById('welcomeName').textContent='أهلًا بكِ يا '+data.name+' 🎨';
+    document.getElementById('welcomeClass').textContent=data.className;
+  }else{
+    loginCard.style.display='block';
+    welcome.style.display='none';
+  }
+}
+function studentLogout(){
+  localStorage.removeItem('itqanStudent');
+  document.getElementById('studentName').value='';
+  document.getElementById('studentClass').value='';
+  document.getElementById('loginMsg').style.display='none';
+  renderStudentLogin();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{showSection('home');renderStudentLogin();});
+</script></body></html>
