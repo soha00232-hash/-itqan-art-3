@@ -54,16 +54,18 @@ summary::-webkit-details-marker{display:none}
 <button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
 <div class="card" id="loginCard">
 <h2>👧 دخول الطالبة</h2>
-<p>اختاري فصلك واكتبي اسمك الثلاثي ثم اضغطي دخول.</p>
+<p>اختاري فصلك ثم اختاري اسمك من القائمة واضغطي دخول.</p>
 <div class="login-form">
 <label><b>الفصل</b></label>
-<select id="studentClass">
+<select id="studentClass" onchange="populateStudentNames()">
 <option value="">اختاري الفصل</option>
 <option value="ثالث/١">ثالث/١</option>
 <option value="ثالث/٣">ثالث/٣</option>
 </select>
-<label><b>اسم الطالبة الثلاثي</b></label>
-<input id="studentName" type="text" autocomplete="name" placeholder="اكتبي اسمك الثلاثي">
+<label><b>اسم الطالبة</b></label>
+<select id="studentName">
+<option value="">اختاري اسم الطالبة</option>
+</select>
 <button class="login-submit" type="button" onclick="studentLogin()">دخول 🎨</button>
 <div id="loginMsg" class="login-msg"></div>
 </div>
@@ -365,6 +367,46 @@ function renderStarStatus(){
   else{el.innerHTML=`<p style="text-align:center">${data.student.name}، احصلي على الدرجة الكاملة في أحد الاختبارات لتحصلي على ⭐ نجمة إتقان.</p>`;}
 }
 
+const studentNamesByClass = {
+  'ثالث/١': [
+    'أبرار عبدالله حامد الزهراني','أبرار عزيز شريعه الله مياه','أميرة محمد احمد الغامدي','ابتسام سعود أمير حسين',
+    'اسراء محمود الله صادق أحمد','ايلاف عبدالله رزيق الربيعي','جوليا عادل حسن حكمي','حال مطر بن ابراهيم الزهراني',
+    'حور احمد درويش حافظ','دانة ابراهيم ادريس حسن','رند ناصر حامد الصاعدي','رهف محسن محمد عبدالله بصير',
+    'روين عبدالفتاح ابراهيم الزهراني','ريتاج نور الأسلام حسن علي آن مين','ريتال عبدربه احمد العميري','ساره طالل منصور الاسمري',
+    'سلوى احمد نجم الوارث بتى وارث','سوزان سليم الله حبيب الله','صفاء عثمان حافظ عثمان','غرام عوض سعيد الزبيدي',
+    'غصون ابراهيم عطيه الزهراني','غال علي مرضي القرني','غنى علي بن مهدي حدادي','فرح احمد عبدالله المنتشري',
+    'النا محمد مقعد البقمي','لمار علاء قاسم أمين','لنا فيصل بن عجب القحطاني','لورين خالد صديق صديق',
+    'لولوه ايمن بكري الصبحى','لينا انور صالح الزبيدي','لينة عبدالله علي الزبيدي','ملك نواف احمد المالكي',
+    'همس ابراهيم عبدالله الخثعمي','ود محمد عبدالله العرياني','ورد سلطان محمد الشهري','ورد عبدالله ابراهيم سنيقالى',
+    'وريف تركي نافع الناشري'
+  ],
+  'ثالث/٣': [
+    'أماني عبده محمد الصحبي','أميره مختار سعيد العتيبي','المار عبدالرحمن حسن الصعب','الهام ناجي مساعد الهبيلي',
+    'بشاير اكرم صالح المعشي','ترف بنت بدر بن عبيد الدعدى','تيانا حسن احمد الشيخي','جنى عبدالرحمن مطيع الرحمن نور',
+    'جوان عبدالله عوض الكعبي','حنين سعد محمد الاسمري','حور علي محمد ناصري','حور نائف محمد الشمراني',
+    'دالين سلطان هيازع البارقي','ديالا سعد فرج عرجاش','دينا سعد هاشم الحربي','رالين معدي بن حمود الدربي',
+    'رحمه ادريس جليل حسين','رولين محمد اسماعيل غروي','ريام حمد محمد يوسف','ريتال حسن ابن محمد جيلان',
+    'ريف علي حمدان الشهري','سلمى عمر ناشي العتيبي','شموخ علي حسن عسيري','ضي ضيف الله احمد الزهراني',
+    'عائشة علي ناصر العزاني','علياء احمد بن علي الزهراني','غال عبدالله علي القرني','غلباء أحمد منصور ال سبر',
+    'فرح سامي سعيد الغامدي','قمر صالح سعيد الزهراني','كيان حسان دخيل الله الصاعدي','الرين حسن سودان الزهراني',
+    'لتين سعد بن حسن العمري','ملك سعد ابن مطير المالكي','ملك معاذ سالم الزهراني','ميال خضر عبدالله الزهراني',
+    'مينار محمد علي حكمي','ندى فارس علي الزهراني','نوره عبدالله صالح الغامدي','هناي سعد بن نويعم السلمي',
+    'ود علي احمد القرني','وهبه صالح حسن علي الدباسي'
+  ]
+};
+
+function populateStudentNames(){
+  const className=document.getElementById('studentClass').value;
+  const nameSelect=document.getElementById('studentName');
+  if(!nameSelect)return;
+  const current=nameSelect.value;
+  nameSelect.innerHTML='<option value="">اختاري اسم الطالبة</option>';
+  (studentNamesByClass[className]||[]).forEach(name=>{
+    const o=document.createElement('option');o.value=name;o.textContent=name;nameSelect.appendChild(o);
+  });
+  if((studentNamesByClass[className]||[]).includes(current)) nameSelect.value=current;
+}
+
 function normalizeArabicName(name){
   return name.trim().replace(/\s+/g,' ');
 }
@@ -374,8 +416,7 @@ function studentLogin(){
   const msg=document.getElementById('loginMsg');
   msg.style.display='block';
   if(!className){msg.textContent='🌷 اختاري الفصل أولًا.';return;}
-  const parts=name.split(' ').filter(Boolean);
-  if(parts.length<3){msg.textContent='🌷 اكتبي اسم الطالبة الثلاثي.';return;}
+  if(!name){msg.textContent='🌷 اختاري اسم الطالبة.';return;}
   localStorage.setItem('itqanStudent',JSON.stringify({name:name,className:className}));
   msg.textContent='✅ تم تسجيل الدخول بنجاح.';
   renderStudentLogin();
@@ -397,8 +438,8 @@ function renderStudentLogin(){
 }
 function studentLogout(){
   localStorage.removeItem('itqanStudent');
-  document.getElementById('studentName').value='';
   document.getElementById('studentClass').value='';
+  populateStudentNames();
   document.getElementById('loginMsg').style.display='none';
   renderStudentLogin();
 }
