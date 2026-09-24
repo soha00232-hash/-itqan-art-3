@@ -33,6 +33,13 @@ summary::-webkit-details-marker{display:none}
 .login-form{display:grid;gap:12px;margin-top:16px}.login-form select,.login-form input{width:100%;padding:14px;border:1px solid #ddd;border-radius:14px;font-family:inherit;font-size:16px;background:#fff;color:#30283a}.login-submit{width:100%;border:0;border-radius:16px;padding:14px 18px;background:#dec1ff;font-family:inherit;font-size:17px;font-weight:700;color:#30283a;cursor:pointer}.login-msg{margin-top:12px;padding:14px;border-radius:14px;background:#faf4ff;display:none}.student-welcome{text-align:center}.student-badge{display:inline-block;background:#f4eaff;border-radius:999px;padding:8px 14px;margin:5px}.logout-btn{border:0;background:#ffe8ef;color:#7a3150;border-radius:14px;padding:10px 14px;font-family:inherit;cursor:pointer}
 
 .teacher-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.teacher-tab{border:0;border-radius:14px;padding:10px 12px;background:#f3e9ff;font:inherit;cursor:pointer}.teacher-panel{display:none}.teacher-panel.active{display:block}.teacher-list{display:grid;gap:10px}.teacher-row{background:#fff8fc;border:1px solid #eadcf1;border-radius:16px;padding:12px}.teacher-row img{width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-top:8px}.danger-btn{border:0;background:#ffe4e4;color:#8a2946;border-radius:12px;padding:8px 11px;font:inherit;cursor:pointer}.gallery-img{width:100%;height:220px;object-fit:cover;border-radius:14px;margin-bottom:10px}.teacher-upload input,.teacher-upload select{width:100%;padding:13px;border:1px solid #ddd;border-radius:14px;font-family:inherit;font-size:16px;background:#fff;color:#30283a}.teacher-upload{display:grid;gap:10px}.private-note{background:#fff4d8;border-radius:14px;padding:10px;font-size:14px}.loading{text-align:center;padding:16px;color:#766f7c}
+.record-section{background:#fff8fc;border:1px solid #eadcf1;border-radius:20px;padding:14px;margin:14px 0}
+.record-section h3{margin:0 0 10px}
+.record-student{background:#fff;border-radius:22px;padding:16px;margin:14px 0;border:1px solid #eee}
+.record-student-title{font-size:20px;font-weight:800;margin-bottom:10px}
+.record-mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.record-mini-grid img{width:100%;height:180px;object-fit:cover;border-radius:14px}
+@media(max-width:560px){.record-mini-grid{grid-template-columns:1fr 1fr}.record-mini-grid img{height:150px}}
 </style>
 </head>
 <body>
@@ -75,7 +82,7 @@ summary::-webkit-details-marker{display:none}
 <h2 id="welcomeName">أهلًا بكِ</h2>
 <div><span class="student-badge" id="welcomeClass"></span></div>
 <p>تم تسجيل دخولك بنجاح. يمكنك الآن البدء بالدروس والاختبارات.</p>
-<button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button>
+<button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button><button class="login-submit" style="margin-top:10px;background:#ffd9ec" type="button" onclick="openMyAchievementRecord()">📘 سجل إنجازي</button>
 <div style="margin-top:12px"><button class="logout-btn" type="button" onclick="studentLogout()">تغيير الطالبة</button></div>
 </div>
 </section>
@@ -147,6 +154,28 @@ summary::-webkit-details-marker{display:none}
 <div class="card"><h2>📘 سجلات الإنجاز</h2><p class="muted">صور سجلات الإنجاز المضافة بواسطة المعلمة.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
 </section>
 
+
+<section id="myRecord" class="section">
+<button class="btn" type="button" onclick="showSection('student')">← رجوع</button>
+<div class="hero"><h1>📘 سجل إنجازي</h1><p id="myRecordStudent"></p></div>
+<div class="card">
+  <div class="record-section"><h3>📄 أوراق العمل</h3><div id="myWorksheets" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="myPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="mySpecial" class="record-mini-grid"></div></div>
+</div>
+</section>
+
+
+<section id="directorRecord" class="section">
+<button class="btn" type="button" onclick="showSection('gallery')">← رجوع إلى سجلات الإنجاز</button>
+<div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للمديرة</p></div>
+<div class="card">
+  <div class="record-section"><h3>📄 أوراق العمل</h3><div id="directorWorksheets" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="directorPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="directorSpecial" class="record-mini-grid"></div></div>
+</div>
+</section>
+
 <section id="teacher" class="section">
 <button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
 <div class="hero"><h1>🔐 لوحة المعلمة</h1><p>خاصة بالمعلمة سهى.</p></div>
@@ -164,7 +193,21 @@ summary::-webkit-details-marker{display:none}
 <button class="teacher-tab" onclick="showTeacherTab('family')">🤝 مشاركات الأسرة</button>
 </div>
 <div id="uploadWork" class="card teacher-panel active"><h2>رفع عمل متميز</h2><div class="teacher-upload"><input id="workStudentName" type="text" placeholder="اسم الطالبة"><select id="workLessonTitle"><option value="">اختاري الدرس</option><option>الاسكتش</option><option>الزخارف الشعبية السعودية</option><option>تكوينات وملامس مطبوعة</option><option>أطبع بوحداتي الهندسية</option><option>طباعة وحدات ذات ملامس مختلفة</option><option>النسيج البسيط الملون</option></select><input id="workFile" type="file" accept="image/*"><button class="login-submit" onclick="teacherUpload('featured')">رفع العمل</button><div id="workStatus" class="login-msg"></div></div><div id="teacherFeaturedList" class="teacher-list" style="margin-top:14px"></div></div>
-<div id="uploadRecord" class="card teacher-panel"><h2>رفع سجل إنجاز</h2><div class="teacher-upload"><input id="recordStudentName" type="text" placeholder="اسم الطالبة"><input id="recordFile" type="file" accept="image/*"><button class="login-submit" onclick="teacherUpload('record')">رفع سجل الإنجاز</button><div id="recordStatus" class="login-msg"></div></div><div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div>
+<div id="uploadRecord" class="card teacher-panel"><h2>📘 سجل إنجاز الطالبة</h2>
+    <p class="muted">اختاري اسم الطالبة والقسم، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
+    <div class="teacher-upload">
+      <input id="recordStudentName" type="text" placeholder="اسم الطالبة">
+      <select id="recordCategory">
+        <option value="">اختاري القسم</option>
+        <option value="أوراق العمل">📄 أوراق العمل</option>
+        <option value="المهام الأدائية">⭐ المهام الأدائية</option>
+        <option value="أعمالي المميزة">🎨 أعمالي المميزة</option>
+      </select>
+      <input id="recordFile" type="file" accept="image/*" multiple>
+      <button class="login-submit" onclick="teacherUploadRecordMulti()">+ إضافة الصور إلى سجل الطالبة</button>
+      <div id="recordStatus" class="login-msg"></div>
+    </div>
+    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div><div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div>
 <div id="scores" class="card teacher-panel"><h2>📊 درجات الطالبات</h2><p class="muted">هذه البيانات تظهر لكِ فقط داخل لوحة المعلمة.</p><div id="teacherScoresList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
 <div id="family" class="card teacher-panel"><h2>🤝 مشاركات الأسرة</h2><p class="muted">الصور المرسلة من قسم شراكة الأسرة داخل الدروس.</p><div id="teacherFamilyList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
 </div>
@@ -201,8 +244,80 @@ async function loadPublicGallery(){
   }
   if(ar.error) r.innerHTML='<div class="muted">تعذر تحميل السجلات الآن.</div>';
   else if(!ar.data?.length) r.innerHTML='<div class="gallery-item">📘<b>سيتم إضافة سجلات الإنجاز هنا</b></div>';
-  else r.innerHTML=ar.data.map(x=>`<div class="gallery-item"><img class="gallery-img" src="${publicImageUrl(x.image_path)}" alt="سجل إنجاز"><b>${esc(x.student_name)}</b></div>`).join('');
+  else {
+    const grouped={};
+    (ar.data||[]).forEach(x=>{const p=parseRecordStudent(x.student_name);(grouped[p.name]=grouped[p.name]||[]).push({...x,_cat:p.category});});
+    r.innerHTML=Object.entries(grouped).map(([name,rows])=>`<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}')"><b style="font-size:18px">${esc(name)}</b><div class="muted">${rows.length} صورة في سجل الإنجاز — اضغطي لفتح السجل كاملًا</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`).join('');
+  }
 }
+
+function encodeRecordStudent(name,category){return name+'|||'+category;}
+function parseRecordStudent(v){
+  const parts=String(v||'').split('|||');
+  return {name:parts[0]||'',category:parts[1]||'عام'};
+}
+async function teacherUploadRecordMulti(){
+  const status=document.getElementById('recordStatus');
+  const name=document.getElementById('recordStudentName').value.trim();
+  const category=document.getElementById('recordCategory').value;
+  const files=Array.from(document.getElementById('recordFile').files||[]);
+  status.style.display='block';
+  if(!name){status.textContent='🌷 اكتبي اسم الطالبة.';return;}
+  if(!category){status.textContent='🌷 اختاري قسم سجل الإنجاز.';return;}
+  if(!files.length){status.textContent='🌷 اختاري صورة واحدة أو أكثر.';return;}
+  status.textContent=`⏳ جارٍ رفع ${files.length} صورة...`;
+  let done=0;
+  try{
+    for(const file of files){
+      const fd=new FormData();
+      fd.set('action','upload_record');
+      fd.set('student_name',encodeRecordStudent(name,category));
+      fd.set('file',file);
+      await teacherApi(fd,true);
+      done++;
+      status.textContent=`⏳ تم رفع ${done} من ${files.length}...`;
+    }
+    status.textContent=`✅ تم إضافة ${done} صورة إلى قسم «${category}» في سجل ${name}.`;
+    document.getElementById('recordFile').value='';
+    await loadTeacherGalleryLists();
+    await loadPublicGallery();
+  }catch(e){status.textContent='❌ '+e.message;}
+}
+
+async function openDirectorRecord(nameEncoded){
+  const name=decodeURIComponent(nameEncoded);
+  showSection('directorRecord');
+  document.getElementById('directorRecordName').textContent=name;
+  const boxMap={'أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance','أعمالي المميزة':'directorSpecial'};
+  Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ تحميل الصور...</div>');
+  const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
+  if(error){
+    Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="muted">تعذر تحميل السجل الآن.</div>');
+    return;
+  }
+  for(const [cat,id] of Object.entries(boxMap)){
+    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===name&&p.category===cat;});
+    document.getElementById(id).innerHTML=rows.length
+      ? rows.map(x=>`<a href="${publicImageUrl(x.image_path)}" target="_blank" rel="noopener"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"></a>`).join('')
+      : '<div class="muted">لا توجد صور مضافة في هذا القسم بعد.</div>';
+  }
+}
+
+async function openMyAchievementRecord(){
+  let st=null;try{st=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  if(!st?.name){showSection('student');return;}
+  showSection('myRecord');
+  document.getElementById('myRecordStudent').textContent=st.name+' — '+st.className;
+  const boxMap={'أوراق العمل':'myWorksheets','المهام الأدائية':'myPerformance','أعمالي المميزة':'mySpecial'};
+  Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ التحميل...</div>');
+  const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
+  if(error){Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="muted">تعذر التحميل الآن.</div>');return;}
+  for(const [cat,id] of Object.entries(boxMap)){
+    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===st.name&&p.category===cat;});
+    document.getElementById(id).innerHTML=rows.length?rows.map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}">`).join(''):'<div class="muted">لم تتم إضافة صور في هذا القسم بعد.</div>';
+  }
+}
+
 function teacherPass(){return sessionStorage.getItem('itqanTeacherPass')||'';}
 async function teacherApi(payload,form=false){
   const opts={method:'POST'};
@@ -239,7 +354,7 @@ async function loadTeacherGalleryLists(){
   if(!teacherPass())return; const [fw,ar]=await Promise.all([sb.from('featured_works').select('*').order('created_at',{ascending:false}),sb.from('achievement_records').select('*').order('created_at',{ascending:false})]);
   const fl=document.getElementById('teacherFeaturedList'),rl=document.getElementById('teacherRecordsList');
   if(fl) fl.innerHTML=fw.data?.length?fw.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> — ${esc(x.lesson_title)}<img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('featured',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد أعمال مضافة بعد.</div>';
-  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b><img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
+  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>{const p=parseRecordStudent(x.student_name);return `<div class="teacher-row"><b>${esc(p.name)}</b> <span class="student-badge">${esc(p.category)}</span><img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`}).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
 }
 async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='featured'?'delete_featured':'delete_record',id});await loadTeacherGalleryLists();await loadPublicGallery();}catch(e){alert(e.message);}}
 async function loadTeacherPrivateData(){
