@@ -20,7 +20,11 @@ details{background:#fff;border-radius:24px;padding:18px;margin:15px 0;box-shadow
 summary{cursor:pointer;font-size:21px;font-weight:700;list-style:none;text-align:center}
 summary::-webkit-details-marker{display:none}
 .choice{display:block;width:100%;border:0;border-radius:15px;padding:14px;margin:8px 0;font-size:16px;background:#f1e7ff;cursor:pointer;font-family:inherit;color:#30283a}.choice.correct{background:#dff6e5}.choice.wrong{background:#ffe4e4}
-@media(max-width:560px){.wrap{padding:12px}.grid{grid-template-columns:1fr 1fr}.card{padding:18px}}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.gallery-item{background:#fff8fc;border:2px dashed #e0c9ee;border-radius:18px;padding:18px;text-align:center;min-height:130px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.record-row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #eee}.record-row:last-child{border-bottom:0}.record-label{font-weight:700}.score-pill{display:inline-block;background:#efe2ff;border-radius:999px;padding:6px 12px;font-weight:700}.perfect{background:#fff2ba}.muted{color:#766f7c;font-size:14px}
+@media(max-width:560px){.wrap{padding:12px}.grid{grid-template-columns:1fr 1fr}.gallery-grid{grid-template-columns:1fr}.card{padding:18px}}
 
 .answer-area{margin:10px 0 18px;padding:14px;border-radius:18px;background:#fff8fc;border:1px dashed #d8b8ea}
 .answer-area textarea{width:100%;min-height:82px;border:1px solid #ddd;border-radius:14px;padding:12px;font-family:inherit;font-size:16px;resize:vertical}
@@ -38,7 +42,6 @@ summary::-webkit-details-marker{display:none}
 <div class="grid">
 <button class="card navcard navbtn" type="button" onclick="showSection('student')"><span>👧</span><b>دخول الطالبة</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
-<button class="card navcard navbtn" type="button" onclick="showSection('family')"><span>🤝</span><b>شراكة الأسرة</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('star')"><span>⭐</span><b>نجمة إتقان</b></button>
 </div>
@@ -75,115 +78,182 @@ summary::-webkit-details-marker{display:none}
 <section id="lessons" class="section">
 <button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
 <div class="card"><h2>📚 الدروس والاختبارات</h2><p>اضغطي على بطاقة الدرس لفتحه:</p></div>
-<button class="card lesson-card navbtn" type="button" onclick="showSection('sketch')"><div class="icon">✏️</div><h2>درس الاسكتش</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
-<button class="card lesson-card navbtn" type="button" onclick="showSection('folk')"><div class="icon">🏺</div><h2>الزخرفة البدائية والشعبية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
-
+<button class="card lesson-card navbtn" type="button" onclick="showSection('sketch')"><div class="icon">✏️</div><h2>الاسكتش</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('folk')"><div class="icon">🏺</div><h2>الزخارف الشعبية السعودية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('textures')"><div class="icon">🖌️</div><h2>تكوينات وملامس مطبوعة</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('geometry')"><div class="icon">🔷</div><h2>أطبع بوحداتي الهندسية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('surfaceprints')"><div class="icon">🧽</div><h2>طباعة وحدات ذات ملامس مختلفة</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('weaving')"><div class="icon">🧶</div><h2>النسيج البسيط الملون</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
 </section>
 
 <section id="sketch" class="section">
 <button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
-<div class="hero"><h1>✏️ درس الاسكتش</h1><p>تعلمي الفكرة ثم جربيها.</p></div>
-<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تتعرف الطالبة على مفهوم الاسكتش وتطبقه بصورة مبسطة.</div>
-<h2>💡 ما الاسكتش؟</h2><p>رسم أولي سريع بخطوط بسيطة يساعد الفنانة على تسجيل فكرتها قبل إضافة التفاصيل.</p>
-<h2>🎨 المطلوب من الدرس</h2><div class="box">ارسمي اسكتشًا بسيطًا باستخدام خطوط خفيفة، ثم طوريه إلى رسم أكثر اكتمالًا.</div></div>
-
-<div class="card">
-<h2>⭐ اختبار الدرس</h2>
-<p><b>السؤال الأول: أي وصف يناسب الاسكتش؟</b> <span>(درجة واحدة)</span></p>
-<button type="button" class="choice" onclick="gradeQ(this,1,false)">لوحة مكتملة بالتفاصيل والألوان</button>
-<button type="button" class="choice" onclick="gradeQ(this,1,true)">رسم سريع بخطوط بسيطة</button>
-<button type="button" class="choice" onclick="gradeQ(this,1,false)">صورة مطبوعة جاهزة</button>
-<div id="q1msg" class="box" style="display:none"></div>
-
-<p><b>السؤال الثاني: ما الخطوة الأولى عند رسم الاسكتش؟</b> <span>(درجة واحدة)</span></p>
-<button type="button" class="choice" onclick="gradeQ(this,2,true)">ألاحظ الشكل</button>
-<button type="button" class="choice" onclick="gradeQ(this,2,false)">ألون الرسم كاملًا</button>
-<button type="button" class="choice" onclick="gradeQ(this,2,false)">أضيف تفاصيل كثيرة مباشرة</button>
-<div id="q2msg" class="box" style="display:none"></div>
-
-<button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showScore()">إظهار الدرجة</button>
-<div id="scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div>
-</div>
-
-<div class="card"><h2>🌟 إنجازي</h2><div class="box">أحسنتِ يا فنانة، لقد أنهيتِ درس الاسكتش بنجاح.</div></div>
+<div class="hero"><h1>✏️ الاسكتش</h1><p>تعلمي الفكرة ثم جربيها.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تتعرف الطالبة على مفهوم الاسكتش وتطبقه بصورة مبسطة.</div><h2>💡 فكرة الدرس</h2><p>الاسكتش رسم أولي سريع بخطوط بسيطة يساعد الفنانة على تسجيل فكرتها قبل إضافة التفاصيل.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">ارسمي اسكتشًا بسيطًا باستخدام خطوط خفيفة، ثم طوريه إلى رسم أكثر اكتمالًا.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أحد أفراد الأسرة شيئًا بسيطًا من المنزل وارسموا له اسكتشًا سريعًا، ثم أضيفي صورة المشاركة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-sketch" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-sketch" type="file" accept="image/*" onchange="previewFamily(this,'sketch')"><img id="familyPreview-sketch" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('sketch','الاسكتش')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-sketch" class="login-msg"></div><div class="muted">تُحفظ المشاركة للمعلمة فقط.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: أي وصف يناسب الاسكتش؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',1,false)">لوحة مكتملة بالتفاصيل والألوان</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',1,true)">رسم سريع بخطوط بسيطة</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',1,false)">صورة مطبوعة جاهزة</button><div id="sketch-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: ما الخطوة الأولى عند رسم الاسكتش؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',2,true)">ألاحظ الشكل</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',2,false)">ألون الرسم كاملًا</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',2,false)">أضيف تفاصيل كثيرة مباشرة</button><div id="sketch-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('sketch')">إظهار الدرجة</button><div id="sketch-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
 </section>
 
 <section id="folk" class="section">
 <button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
-<div class="hero"><h1>🏺 الزخرفة البدائية والشعبية</h1><p>نتعرف على الزخارف ونلاحظ أشكالها ثم نبتكر زخرفة بسيطة.</p></div>
-
-<div class="card">
-<h2>🎯 الهدف</h2>
-<div class="box">أن تتعرف الطالبة على الزخرفة البدائية والشعبية، وتميز بعض أشكالها، وتستفيد منها في تكوين زخرفي بسيط.</div>
-<h2>💡 فكرة الدرس</h2>
-<p>الزخارف من الفنون التي استخدمها الإنسان لتجميل الأشياء من حوله، وتظهر في أشكال وخطوط ورموز ونقوش متنوعة.</p>
-</div>
-
-<details>
-<summary>🎮 لعبة: أيها زخرفة؟</summary>
-<p>اختاري الوصف الأقرب للزخرفة:</p>
-<details><summary class="choice">أشكال وخطوط تتكرر لتجميل السطح</summary><div class="box">✅ أحسنتِ!</div></details>
-<details><summary class="choice">كتابة مسألة حسابية</summary><div class="box">❌ حاولي مرة أخرى.</div></details>
-<details><summary class="choice">صورة فوتوغرافية فقط</summary><div class="box">❌ حاولي مرة أخرى.</div></details>
-</details>
-<div class="answer-area"><label>✍️ حلي هنا:</label><textarea placeholder="اكتبي إجابتك هنا..."></textarea></div>
-
-<div class="card">
-<h2>👀 لاحظي واكتشفي</h2>
-<div class="box">ابحثي في البيئة من حولك عن خطوط أو أشكال أو نقوش زخرفية، ثم صفي الشكل الذي أعجبك.</div>
-<div class="answer-area"><label>✍️ حلي هنا:</label><textarea placeholder="صفي الشكل الذي أعجبك..."></textarea></div>
-<h2>🎨 تحدي الفنانة</h2>
-<div class="box">ابتكري وحدة زخرفية بسيطة من خط أو شكل، ثم كرريها لتكوين شريط زخرفي جميل.</div>
-<div class="answer-area">
-<label>📸 ضعي صورة عملك هنا:</label>
-<input type="file" accept="image/*" onchange="previewArt(this)" style="width:100%;padding:12px;background:white;border:1px solid #ddd;border-radius:14px">
-<img id="artPreview" alt="معاينة عمل الطالبة" style="display:none;width:100%;max-height:320px;object-fit:contain;margin-top:12px;border-radius:16px">
-</div>
-</div>
+<div class="hero"><h1>🏺 الزخارف الشعبية السعودية</h1><p>نتعرف على جمال الزخارف الشعبية في تراثنا السعودي.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تتعرف الطالبة على بعض سمات الزخارف الشعبية السعودية وتوظفها في تكوين زخرفي بسيط.</div><h2>💡 فكرة الدرس</h2><p>تتميز الزخارف الشعبية السعودية بتنوع الخطوط والأشكال والألوان وتظهر في البيوت والأبواب والمنسوجات والحرف التقليدية.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">صممي وحدة زخرفية مستوحاة من الزخارف الشعبية السعودية ثم كرريها بشكل منظم.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">ابحثي مع أسرتك عن زخرفة شعبية سعودية في المنزل أو في صورة تراثية، ثم التقطي صورة للمشاركة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-folk" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-folk" type="file" accept="image/*" onchange="previewFamily(this,'folk')"><img id="familyPreview-folk" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('folk','الزخارف الشعبية السعودية')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-folk" class="login-msg"></div><div class="muted">تُحفظ المشاركة للمعلمة فقط.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: أين يمكن أن نجد الزخارف الشعبية السعودية؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,true)">في البيوت والحرف التقليدية</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,false)">في مسائل الرياضيات فقط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,false)">في إشارات المرور فقط</button><div id="folk-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: ما الذي يساعد على تكوين شريط زخرفي؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,true)">تكرار الوحدة الزخرفية</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,false)">كتابة كلمات عشوائية</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,false)">ترك المساحة فارغة</button><div id="folk-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('folk')">إظهار الدرجة</button><div id="folk-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
 </section>
 
-<section id="family" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>🤝 شراكة الأسرة</h2><p>مساحة لمشاركة الأسرة في أنشطة فنية منزلية خفيفة.</p></div></section>
-<section id="gallery" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>🎨 مبدعات</h2><p>هنا تُعرض أعمال الطالبات المبدعة وسجلات الإنجاز للصف الثالث.</p></div></section>
-<section id="star" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>⭐ نجمة إتقان</h2><p>مساحة لعرض الأعمال المتميزة.</p></div></section>
+<section id="textures" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🖌️ تكوينات وملامس مطبوعة</h1><p>نكتشف الملامس ونحولها إلى تكوينات مطبوعة جميلة.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تميز الطالبة بين الملامس المختلفة وتوظفها في تكوين مطبوع.</div><h2>💡 فكرة الدرس</h2><p>الملمس هو الإحساس بسطح الشيء، ويمكن الاستفادة من الأسطح المختلفة لعمل طبعات متنوعة.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">اختاري خامات ذات ملامس متنوعة وكوني منها تكوينًا مطبوعًا متوازنًا.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك خامتين آمنتين ذواتي ملمسين مختلفين، ثم جربي طباعتهما وقارني النتيجة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-textures" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-textures" type="file" accept="image/*" onchange="previewFamily(this,'textures')"><img id="familyPreview-textures" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('textures','تكوينات وملامس مطبوعة')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-textures" class="login-msg"></div><div class="muted">تُحفظ المشاركة للمعلمة فقط.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: ما المقصود بالملمس؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',1,true)">صفة سطح الشيء</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',1,false)">لون واحد فقط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',1,false)">حجم الورقة</button><div id="textures-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: أي خيار مناسب للطباعة بالملامس؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',2,true)">سطح ذو نتوءات أو خطوط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',2,false)">هواء الغرفة</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',2,false)">صوت الموسيقى</button><div id="textures-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('textures')">إظهار الدرجة</button><div id="textures-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="geometry" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🔷 أطبع بوحداتي الهندسية</h1><p>نستخدم الأشكال الهندسية لبناء وحدات طباعية منظمة.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن توظف الطالبة الوحدات الهندسية في تكوين طباعي منظم.</div><h2>💡 فكرة الدرس</h2><p>يمكن تحويل المربع والمثلث والدائرة وغيرها إلى وحدات تتكرر في أنماط جميلة.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">كوّني وحدة هندسية ثم كرري طباعتها بنظام واضح.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك ثلاثة أشكال هندسية من أشياء موجودة في المنزل وحددي كيف يمكن استخدامها كوحدات طباعية.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-geometry" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-geometry" type="file" accept="image/*" onchange="previewFamily(this,'geometry')"><img id="familyPreview-geometry" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('geometry','أطبع بوحداتي الهندسية')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-geometry" class="login-msg"></div><div class="muted">تُحفظ المشاركة للمعلمة فقط.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: أي شكل يعد وحدة هندسية؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',1,true)">المثلث</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',1,false)">الرائحة</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',1,false)">الصوت</button><div id="geometry-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: ماذا يحدث عند تكرار الوحدة بنظام؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',2,true)">يتكون نمط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',2,false)">تختفي الأشكال</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',2,false)">تتوقف الطباعة</button><div id="geometry-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('geometry')">إظهار الدرجة</button><div id="geometry-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="surfaceprints" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🧽 طباعة وحدات ذات ملامس مختلفة</h1><p>نجرب الطباعة بوحدات متنوعة الملمس ونقارن آثارها.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تطبع الطالبة وحدات ذات ملامس مختلفة وتلاحظ اختلاف الأثر الطباعي.</div><h2>💡 فكرة الدرس</h2><p>اختلاف ملمس الوحدة يؤدي إلى اختلاف شكل الأثر المطبوع.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">جربي طباعتين بوحدتين مختلفتي الملمس ثم قارني بين الأثرين.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك وحدتين آمنتين مختلفتي الملمس، وصوري أثر كل منهما بعد الطباعة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-surfaceprints" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-surfaceprints" type="file" accept="image/*" onchange="previewFamily(this,'surfaceprints')"><img id="familyPreview-surfaceprints" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('surfaceprints','طباعة وحدات ذات ملامس مختلفة')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-surfaceprints" class="login-msg"></div><div class="muted">تُحفظ المشاركة للمعلمة فقط.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: لماذا تختلف آثار الطباعة؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',1,true)">لاختلاف الملامس</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',1,false)">لأن الورق يتكلم</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',1,false)">لأن الألوان تختفي</button><div id="surfaceprints-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: ما الخطوة المناسبة بعد الطباعة؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',2,true)">مقارنة الآثار</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',2,false)">تمزيق العمل</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',2,false)">مسح كل الطبعات</button><div id="surfaceprints-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('surfaceprints')">إظهار الدرجة</button><div id="surfaceprints-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="weaving" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🧶 النسيج البسيط الملون</h1><p>نتعلم فكرة التعاشق ونكوّن نسيجًا بسيطًا بالألوان.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تنفذ الطالبة نسيجًا بسيطًا ملونًا باستخدام التعاشق المنتظم.</div><h2>💡 فكرة الدرس</h2><p>يقوم النسيج البسيط على مرور الشرائط بالتبادل فوق وتحت لتكوين تعاشق منظم.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">نفذي نسيجًا ورقيًا بسيطًا بلونين أو أكثر مع المحافظة على التعاشق المنتظم.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك لونين متناسقين للنسيج، وساعديهم في ملاحظة تكرار نمط فوق/تحت.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-weaving" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-weaving" type="file" accept="image/*" onchange="previewFamily(this,'weaving')"><img id="familyPreview-weaving" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('weaving','النسيج البسيط الملون')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-weaving" class="login-msg"></div><div class="muted">تُحفظ المشاركة للمعلمة فقط.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: كيف تتعاشق الشرائط في النسيج البسيط؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',1,true)">فوق وتحت بالتبادل</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',1,false)">كلها فوق فقط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',1,false)">كلها تحت فقط</button><div id="weaving-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: ما الذي يجعل النسيج أكثر جمالًا؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',2,true)">تنظيم التعاشق وتناسق الألوان</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',2,false)">قص الورقة عشوائيًا</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',2,false)">ترك الشرائط دون ترتيب</button><div id="weaving-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('weaving')">إظهار الدرجة</button><div id="weaving-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="gallery" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+<div class="hero"><h1>🎨 مبدعات</h1><p>أعمال الطالبات وسجلات الإنجاز في مكان واحد.</p></div>
+<div class="card"><h2>🌟 الأعمال المتميزة</h2><p class="muted">تعرض المعلمة هنا الأعمال الفنية المتميزة: صورة العمل + اسم الطالبة + اسم الدرس.</p>
+<div class="gallery-grid">
+<div class="gallery-item"><div style="font-size:40px">🎨</div><b>عمل مبدع</b><span class="muted">يُضاف هنا عمل طالبة متميز</span></div>
+<div class="gallery-item"><div style="font-size:40px">🌸</div><b>إبداع فني</b><span class="muted">يُضاف هنا عمل طالبة متميز</span></div>
+<div class="gallery-item"><div style="font-size:40px">✨</div><b>لمسة فنانة</b><span class="muted">يُضاف هنا عمل طالبة متميز</span></div>
+<div class="gallery-item"><div style="font-size:40px">🏆</div><b>عمل متقن</b><span class="muted">يُضاف هنا عمل طالبة متميز</span></div>
+</div></div>
+<div class="card"><h2>📘 سجلات الإنجاز</h2><p class="muted">تضيف المعلمة هنا صور سجلات الإنجاز لتكون ظاهرة للمديرة.</p><div class="gallery-grid"><div class="gallery-item"><div style="font-size:40px">📘</div><b>سجل إنجاز</b><span class="muted">تضاف صورة السجل هنا</span></div><div class="gallery-item"><div style="font-size:40px">📒</div><b>سجل إنجاز</b><span class="muted">تضاف صورة السجل هنا</span></div></div></div>
+</section>
+<section id="star" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>⭐ نجمة إتقان</h2><div id="starStatus"><p>أكملي الاختبارات لتحصلي على نجمة إتقان.</p></div></div></section>
 
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = 'https://qkegutmfdbtlunbvrzgt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_od0E1kpfsZtSCh9Hkj8hLA_ihCiU7xN';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const lessonTitles = {sketch:'الاسكتش',folk:'الزخارف الشعبية السعودية',textures:'تكوينات وملامس مطبوعة',geometry:'أطبع بوحداتي الهندسية',surfaceprints:'طباعة وحدات ذات ملامس مختلفة',weaving:'النسيج البسيط الملون'};
 function showSection(id){
   document.querySelectorAll('main > section').forEach(s=>s.style.display='none');
   const target=document.getElementById(id);
-  if(target){target.style.display='block'; window.scrollTo({top:0,behavior:'smooth'});}
+  if(target){target.style.display='block'; if(id==='star')renderStarStatus(); window.scrollTo({top:0,behavior:'smooth'});}
 }
 
-const quizAnswers = {1:null, 2:null};
-
-function gradeQ(btn,q,isCorrect){
-  const card = btn.closest('.card');
-  const questionButtons = Array.from(card.querySelectorAll(`button[onclick*="gradeQ(this,${q},"]`));
+const lessonAnswers = {};
+function gradeLessonQ(btn,lesson,q,isCorrect){
+  lessonAnswers[lesson]=lessonAnswers[lesson]||{1:null,2:null};
+  const card=btn.closest('.card');
+  const questionButtons=Array.from(card.querySelectorAll(`button[onclick*="gradeLessonQ(this,'${lesson}',${q},"]`));
   questionButtons.forEach(b=>b.classList.remove('correct','wrong'));
-  btn.classList.add(isCorrect ? 'correct' : 'wrong');
-  quizAnswers[q] = isCorrect;
-  const msg = document.getElementById('q'+q+'msg');
+  btn.classList.add(isCorrect?'correct':'wrong');
+  lessonAnswers[lesson][q]=isCorrect;
+  const msg=document.getElementById(`${lesson}-q${q}msg`);
   msg.style.display='block';
-  msg.textContent = isCorrect ? '✅ أحسنتِ! إجابة صحيحة.' : '❌ حاولي مرة أخرى.';
+  msg.textContent=isCorrect?'✅ أحسنتِ! إجابة صحيحة.':'❌ حاولي مرة أخرى.';
 }
-
-function showScore(){
-  const box=document.getElementById('scoreBox');
-  box.style.display='block';
-  if(quizAnswers[1]===null || quizAnswers[2]===null){
-    box.textContent='🌷 أجيبي عن السؤالين أولًا ثم اعرضي الدرجة.';
-    return;
+function showLessonScore(lesson){
+  const ans=lessonAnswers[lesson]||{1:null,2:null};
+  const box=document.getElementById(`${lesson}-scoreBox`); box.style.display='block';
+  if(ans[1]===null||ans[2]===null){box.textContent='🌷 أجيبي عن السؤالين أولًا ثم اعرضي الدرجة.';return;}
+  const score=(ans[1]?1:0)+(ans[2]?1:0);
+  box.textContent=score===2?'🌟 درجتك 2 من 2 — ممتازة يا فنانة!':`درجتك ${score} من 2 — حاولي مرة أخرى لتحصلي على الدرجة كاملة.`;
+  saveLessonScore(lesson,score,2);
+}
+function previewFamily(input,lesson){
+  const img=document.getElementById('familyPreview-'+lesson);
+  if(input.files && input.files[0]){
+    img.src=URL.createObjectURL(input.files[0]); img.style.display='block';
   }
-  const score=(quizAnswers[1]?1:0)+(quizAnswers[2]?1:0);
-  box.textContent = score===2 ? '🌟 درجتك 2 من 2 — ممتازة يا فنانة!' : `درجتك ${score} من 2 — حاولي مرة أخرى لتحصلي على الدرجة كاملة.`;
+}
+async function submitFamily(lesson,title){
+  const nameEl=document.getElementById('familyName-'+lesson);
+  const fileEl=document.getElementById('familyFile-'+lesson);
+  const status=document.getElementById('familyStatus-'+lesson);
+  const name=(nameEl?.value||'').trim().replace(/\s+/g,' ');
+  const file=fileEl?.files?.[0];
+  status.style.display='block';
+  if(!name){status.textContent='🌷 اكتبي اسم الطالبة.';return;}
+  if(!file){status.textContent='🌷 اختاري صورة المشاركة.';return;}
+  if(file.size>5*1024*1024){status.textContent='🌷 حجم الصورة كبير. اختاري صورة أقل من 5 ميجابايت.';return;}
+  status.textContent='⏳ جارٍ إرسال المشاركة...';
+  try{
+    const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-zA-Z0-9]/g,'').toLowerCase()||'jpg';
+    const path=`${lesson}/${Date.now()}-${Math.random().toString(36).slice(2,10)}.${ext}`;
+    const up=await sb.storage.from('family-submissions').upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type||undefined});
+    if(up.error) throw up.error;
+    const ins=await sb.from('family_submissions').insert({student_name:name,lesson_id:lesson,lesson_title:title,image_path:path});
+    if(ins.error) throw ins.error;
+    status.textContent='✅ تم إرسال مشاركة الأسرة بنجاح.';
+    nameEl.value=''; fileEl.value='';
+    const img=document.getElementById('familyPreview-'+lesson); if(img) img.style.display='none';
+  }catch(err){
+    console.error(err); status.textContent='تعذر الإرسال الآن. حاولي مرة أخرى.';
+  }
 }
 
-function previewArt(input){
- const img=document.getElementById('artPreview');
- if(input.files && input.files[0]){
-   img.src=URL.createObjectURL(input.files[0]);
-   img.style.display='block';
- }
+function saveLessonScore(lesson,score,total){
+  let student=null; try{student=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  if(!student || !student.name || !student.className) return;
+  let all={}; try{all=JSON.parse(localStorage.getItem('itqanScores')||'{}')}catch(e){}
+  const key=student.className+'|'+student.name;
+  all[key]=all[key]||{};
+  all[key][lesson]={score:score,total:total,date:new Date().toLocaleDateString('ar-SA')};
+  localStorage.setItem('itqanScores',JSON.stringify(all));
+  sb.from('student_scores').insert({
+    student_name:student.name,
+    class_name:student.className,
+    lesson_id:lesson,
+    lesson_title:lessonTitles[lesson]||lesson,
+    score:score,
+    total:total
+  }).then(({error})=>{if(error) console.error('score save error',error)});
+}
+function getCurrentStudentRecord(){
+  let student=null,all={};
+  try{student=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  try{all=JSON.parse(localStorage.getItem('itqanScores')||'{}')}catch(e){}
+  if(!student || !student.name || !student.className) return {student:null,record:{}};
+  const key=student.className+'|'+student.name;
+  return {student:student,record:all[key]||{}};
+}
+function renderAchievementRecord(){
+  const el=document.getElementById('achievementRecord'); if(!el)return;
+  const data=getCurrentStudentRecord();
+  if(!data.student){el.innerHTML='<p class="muted">تضيف المعلمة صور سجلات الإنجاز هنا لتكون ظاهرة للمديرة.</p>';return;}
+  const sk=data.record.sketch;
+  const scoreText=sk ? `${sk.score} / ${sk.total}` : 'لم يُنجز بعد';
+  const badge=sk && sk.score===sk.total ? ' ⭐' : '';
+  el.innerHTML=`<div class="record-row"><span class="record-label">اسم الطالبة</span><span>${data.student.name}</span></div><div class="record-row"><span class="record-label">الفصل</span><span>${data.student.className}</span></div><div class="record-row"><span class="record-label">اختبار درس الاسكتش</span><span class="score-pill ${sk&&sk.score===sk.total?'perfect':''}">${scoreText}${badge}</span></div>`;
+}
+function renderStarStatus(){
+  const el=document.getElementById('starStatus'); if(!el)return;
+  const data=getCurrentStudentRecord();
+  if(!data.student){el.innerHTML='<p>سجلي الدخول أولًا لعرض حالة نجمة إتقان.</p>';return;}
+  const perfect=Object.values(data.record).filter(x=>x && x.score===x.total).length;
+  if(perfect>0){el.innerHTML=`<div style="text-align:center;font-size:60px">⭐</div><h3 style="text-align:center">${data.student.name}</h3><p style="text-align:center">حصلتِ على ${perfect} نجمة إتقان حتى الآن.</p>`;}
+  else{el.innerHTML=`<p style="text-align:center">${data.student.name}، احصلي على الدرجة الكاملة في أحد الاختبارات لتحصلي على ⭐ نجمة إتقان.</p>`;}
 }
 
 function normalizeArabicName(name){
@@ -225,4 +295,4 @@ function studentLogout(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{showSection('home');renderStudentLogin();});
-</script></body></html>
+</script><script>setTimeout(()=>{document.querySelector("button[onclick*=\"lessons\"]").click(); document.body.setAttribute("data-test", document.getElementById("lessons").style.display||"none")},100);</script></body></html>
