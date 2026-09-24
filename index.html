@@ -159,8 +159,10 @@ summary::-webkit-details-marker{display:none}
 <button class="btn" type="button" onclick="showSection('student')">← رجوع</button>
 <div class="hero"><h1>📘 سجل إنجازي</h1><p id="myRecordStudent"></p></div>
 <div class="card">
+  <div class="record-section"><h3>👧 سيرتي الذاتية</h3><div class="muted">حتى صورتين</div><div id="myBio" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="myWorksheets" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="myPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>📝 الاختبارات</h3><div id="myTests" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="mySpecial" class="record-mini-grid"></div></div>
 </div>
 </section>
@@ -170,8 +172,10 @@ summary::-webkit-details-marker{display:none}
 <button class="btn" type="button" onclick="showSection('gallery')">← رجوع إلى سجلات الإنجاز</button>
 <div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للمديرة</p></div>
 <div class="card">
+  <div class="record-section"><h3>👧 سيرتي الذاتية</h3><div class="muted">حتى صورتين</div><div id="directorBio" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="directorWorksheets" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="directorPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>📝 الاختبارات</h3><div id="directorTests" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="directorSpecial" class="record-mini-grid"></div></div>
 </div>
 </section>
@@ -199,8 +203,10 @@ summary::-webkit-details-marker{display:none}
       <input id="recordStudentName" type="text" placeholder="اسم الطالبة">
       <select id="recordCategory">
         <option value="">اختاري القسم</option>
+        <option value="سيرتي الذاتية">👧 سيرتي الذاتية</option>
         <option value="أوراق العمل">📄 أوراق العمل</option>
         <option value="المهام الأدائية">⭐ المهام الأدائية</option>
+        <option value="الاختبارات">📝 الاختبارات</option>
         <option value="أعمالي المميزة">🎨 أعمالي المميزة</option>
       </select>
       <input id="recordFile" type="file" accept="image/*" multiple>
@@ -265,6 +271,7 @@ async function teacherUploadRecordMulti(){
   if(!name){status.textContent='🌷 اكتبي اسم الطالبة.';return;}
   if(!category){status.textContent='🌷 اختاري قسم سجل الإنجاز.';return;}
   if(!files.length){status.textContent='🌷 اختاري صورة واحدة أو أكثر.';return;}
+  if(category==='سيرتي الذاتية' && files.length>2){status.textContent='🌷 قسم سيرتي الذاتية يسمح بصورتين كحد أقصى في كل إضافة.';return;}
   status.textContent=`⏳ جارٍ رفع ${files.length} صورة...`;
   let done=0;
   try{
@@ -288,7 +295,7 @@ async function openDirectorRecord(nameEncoded){
   const name=decodeURIComponent(nameEncoded);
   showSection('directorRecord');
   document.getElementById('directorRecordName').textContent=name;
-  const boxMap={'أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance','أعمالي المميزة':'directorSpecial'};
+  const boxMap={'سيرتي الذاتية':'directorBio','أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance','الاختبارات':'directorTests','أعمالي المميزة':'directorSpecial'};
   Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ تحميل الصور...</div>');
   const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
   if(error){
@@ -308,7 +315,7 @@ async function openMyAchievementRecord(){
   if(!st?.name){showSection('student');return;}
   showSection('myRecord');
   document.getElementById('myRecordStudent').textContent=st.name+' — '+st.className;
-  const boxMap={'أوراق العمل':'myWorksheets','المهام الأدائية':'myPerformance','أعمالي المميزة':'mySpecial'};
+  const boxMap={'سيرتي الذاتية':'myBio','أوراق العمل':'myWorksheets','المهام الأدائية':'myPerformance','الاختبارات':'myTests','أعمالي المميزة':'mySpecial'};
   Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ التحميل...</div>');
   const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
   if(error){Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="muted">تعذر التحميل الآن.</div>');return;}
