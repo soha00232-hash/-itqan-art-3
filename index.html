@@ -69,7 +69,7 @@ summary::-webkit-details-marker{display:none}
 <button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('star')"><span>⭐</span><b>نجمة إتقان</b></button>
 </div>
-<div class="private-note" style="margin-top:16px">وضع مشاهدة للمديرة دون الحاجة لاختيار فصل أو اسم طالبة.</div>
+<div class="private-note" style="margin-top:16px">وضع مشاهدة للزوار دون الحاجة لاختيار فصل أو اسم طالبة.</div>
 </div>
 </section>
 
@@ -186,7 +186,7 @@ summary::-webkit-details-marker{display:none}
 
 <section id="directorRecord" class="section">
 <button class="btn" type="button" onclick="showSection('gallery')">← رجوع إلى سجلات الإنجاز</button>
-<div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للمديرة</p></div>
+<div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للزوار</p></div>
 <div class="card">
   <div class="record-section"><h3>👧 سيرتي الذاتية</h3><div class="muted">حتى صورتين</div><div id="directorBio" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="directorWorksheets" class="record-mini-grid"></div></div>
@@ -490,7 +490,7 @@ function getCurrentStudentRecord(){
 function renderAchievementRecord(){
   const el=document.getElementById('achievementRecord'); if(!el)return;
   const data=getCurrentStudentRecord();
-  if(!data.student){el.innerHTML='<p class="muted">تضيف المعلمة صور سجلات الإنجاز هنا لتكون ظاهرة للمديرة.</p>';return;}
+  if(!data.student){el.innerHTML='<p class="muted">تضيف المعلمة صور سجلات الإنجاز هنا لتكون ظاهرة للزوار.</p>';return;}
   const sk=data.record.sketch;
   const scoreText=sk ? `${sk.score} / ${sk.total}` : 'لم يُنجز بعد';
   const badge=sk && sk.score===sk.total ? ' ⭐' : '';
