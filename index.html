@@ -61,12 +61,12 @@ summary::-webkit-details-marker{display:none}
 <section id="home">
 <div class="hero"><h1>أهلًا بكِ في منصة إتقان 🎨</h1><p>تعلمي، جربي، وشاركي إبداعك.</p></div>
 <div class="grid">
-<button class="card navcard navbtn" type="button" onclick="showSection('student')"><span>👧</span><b>دخول الطالبة</b></button>
+<button class="card navcard navbtn" type="button" onclick="visitorMode=false;showSection('student')"><span>👧</span><b>دخول الطالبة</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('star')"><span>⭐</span><b>نجمة إتقان</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('teacher')"><span>🔐</span><b>لوحة المعلمة</b></button>
-<button class="card navcard navbtn" type="button" onclick="showSection('manager')"><span>👩‍💼</span><b>دخول الزوار</b></button>
+<button class="card navcard navbtn" type="button" onclick="openVisitorMode()"><span>👩‍💼</span><b>دخول الزوار</b></button>
 </div>
 </section>
 
@@ -80,7 +80,7 @@ summary::-webkit-details-marker{display:none}
 <div class="grid" style="margin-top:16px">
 <button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
-<button class="card navcard navbtn" type="button" onclick="showSection('star')"><span>⭐</span><b>نجمة إتقان</b></button>
+<button class="card navcard navbtn" type="button" onclick="showVisitorStar()"><span>⭐</span><b>نجمة إتقان</b></button>
 </div>
 <div class="private-note" style="margin-top:16px">وضع مشاهدة للزوار دون الحاجة لاختيار فصل أو اسم طالبة.</div>
 </div>
@@ -431,6 +431,16 @@ async function promoteFamily(btn,nameEncoded,titleEncoded,urlEncoded){
 }
 async function teacherDeletePrivate(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='score'?'delete_score':'delete_family',id});await loadTeacherPrivateData();}catch(e){alert(e.message);}}
 
+let visitorMode=false;
+function openVisitorMode(){
+  visitorMode=true;
+  showSection('manager');
+}
+function showVisitorStar(){
+  visitorMode=true;
+  showSection('star');
+}
+
 function showSection(id){
   document.querySelectorAll('main > section').forEach(s=>s.style.display='none');
   const target=document.getElementById(id);
@@ -523,10 +533,55 @@ function renderAchievementRecord(){
   const badge=sk && sk.score===sk.total ? ' ⭐' : '';
   el.innerHTML=`<div class="record-row"><span class="record-label">اسم الطالبة</span><span>${data.student.name}</span></div><div class="record-row"><span class="record-label">الفصل</span><span>${data.student.className}</span></div><div class="record-row"><span class="record-label">اختبار درس الاسكتش</span><span class="score-pill ${sk&&sk.score===sk.total?'perfect':''}">${scoreText}${badge}</span></div>`;
 }
-function renderStarStatus(){
+async function renderStarStatus(){
   const el=document.getElementById('starStatus'); if(!el)return;
   const data=getCurrentStudentRecord();
-  if(!data.student){el.innerHTML='<p>سجلي الدخول أولًا لعرض حالة نجمة إتقان.</p>';return;}
+  if(!data.student){
+    if(teacherPass()){
+      el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
+      try{
+        const d=await teacherApi({action:'list_teacher'});
+        const scores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_'));
+        const winners={};
+        for(const x of scores){
+          if(Number(x.total)>0 && Number(x.score)===Number(x.total)){
+            const key=(x.class_name||'')+'|'+(x.student_name||'');
+            winners[key]=winners[key]||{name:x.student_name,className:x.class_name,count:0};
+            winners[key].count++;
+          }
+        }
+        const rows=Object.values(winners);
+        el.innerHTML=rows.length
+          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span><div>⭐ ${x.count} نجمة إتقان</div></div>`).join('')
+          : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد طالبة حصلت على الدرجة الكاملة حتى الآن.</p></div>';
+      }catch(e){
+        el.innerHTML='<p class="muted">تعذر تحميل بيانات نجمة إتقان الآن.</p>';
+      }
+    }else if(visitorMode){
+      el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
+      try{
+        const {data:scores,error}=await sb.from('student_scores').select('student_name,class_name,lesson_id,score,total');
+        if(error)throw error;
+        const winners={};
+        for(const x of (scores||[])){
+          if(String(x.lesson_id||'').startsWith('achievement_eval_'))continue;
+          if(Number(x.total)>0 && Number(x.score)===Number(x.total)){
+            const key=(x.class_name||'')+'|'+(x.student_name||'');
+            winners[key]={name:x.student_name,className:x.class_name};
+          }
+        }
+        const rows=Object.values(winners).sort((a,b)=>String(a.className||'').localeCompare(String(b.className||''),'ar')||String(a.name||'').localeCompare(String(b.name||''),'ar'));
+        el.innerHTML=rows.length
+          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3><p class="muted" style="text-align:center">تظهر للزوار أسماء الطالبات الحاصلات على نجمة إتقان دون عرض الدرجات التفصيلية.</p>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span></div>`).join('')
+          : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد طالبة حصلت على نجمة إتقان حتى الآن.</p></div>';
+      }catch(e){
+        el.innerHTML='<p class="muted">تعذر تحميل أسماء طالبات نجمة إتقان الآن.</p>';
+      }
+    }else{
+      el.innerHTML='<p>سجلي الدخول أولًا لعرض حالة نجمة إتقان.</p>';
+    }
+    return;
+  }
   const perfect=Object.values(data.record).filter(x=>x && x.score===x.total).length;
   if(perfect>0){el.innerHTML=`<div style="text-align:center;font-size:60px">⭐</div><h3 style="text-align:center">${data.student.name}</h3><p style="text-align:center">حصلتِ على ${perfect} نجمة إتقان حتى الآن.</p>`;}
   else{el.innerHTML=`<p style="text-align:center">${data.student.name}، احصلي على الدرجة الكاملة في أحد الاختبارات لتحصلي على ⭐ نجمة إتقان.</p>`;}
@@ -649,6 +704,7 @@ function normalizeArabicName(name){
   return name.trim().replace(/\s+/g,' ');
 }
 function studentLogin(){
+  visitorMode=false;
   const className=document.getElementById('studentClass').value;
   const name=normalizeArabicName(document.getElementById('studentName').value);
   const msg=document.getElementById('loginMsg');
