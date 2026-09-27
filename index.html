@@ -431,25 +431,66 @@ async function loadTeacherPrivateData(){
   if(!teacherPass())return; const s=document.getElementById('teacherScoresList'),f=document.getElementById('teacherFamilyList'); if(s)s.innerHTML='<div class="loading">جارٍ التحميل...</div>';if(f)f.innerHTML='<div class="loading">جارٍ التحميل...</div>';
   try{const d=await teacherApi({action:'list_teacher'});
     if(s){const normalScores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_'));s.innerHTML=normalScores.length?normalScores.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> <span class="student-badge">${esc(x.class_name)}</span><div>${esc(x.lesson_title)} — <b>${x.score}/${x.total}</b></div><div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><button class="danger-btn" onclick="teacherDeletePrivate('score',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد درجات محفوظة بعد.</div>';}
-    if(f)f.innerHTML=d.family?.length?d.family.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b><div>${esc(x.lesson_title)}</div>${x.signed_url?`<img src="${x.signed_url}" alt="مشاركة الأسرة">`:''}<div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="promoteFamily(this,'${encodeURIComponent(x.student_name)}','${encodeURIComponent(x.lesson_title)}','${encodeURIComponent(x.signed_url||'')}')">⭐ اعرضي في المنصة</button><button class="danger-btn" onclick="teacherDeletePrivate('family',${x.id})">حذف</button></div></div>`).join(''):'<div class="muted">لا توجد مشاركات أسرة بعد.</div>';
+    if(f)f.innerHTML=d.family?.length?d.family.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b><div>${esc(x.lesson_title)}</div>${x.signed_url?`<img src="${x.signed_url}" alt="مشاركة الأسرة">`:''}<div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="promoteFamily(this,'${encodeURIComponent(x.student_name)}','${encodeURIComponent(x.lesson_title)}','${encodeURIComponent(x.signed_url||'')}')">⭐ اعرضي في المنصة</button><button class="danger-btn" onclick="removeFamilyFromShowcase(this,'${encodeURIComponent(x.student_name)}','${encodeURIComponent(x.lesson_title)}')">🗑 حذف من العرض</button><button class="danger-btn" onclick="teacherDeletePrivate('family',${x.id})">حذف المشاركة</button></div></div>`).join(''):'<div class="muted">لا توجد مشاركات أسرة بعد.</div>';
   }catch(e){if(s)s.innerHTML='<div class="muted">'+esc(e.message)+'</div>';if(f)f.innerHTML='<div class="muted">'+esc(e.message)+'</div>';}
 }
 async function promoteFamily(btn,nameEncoded,titleEncoded,urlEncoded){
   const name=decodeURIComponent(nameEncoded), title=decodeURIComponent(titleEncoded), url=decodeURIComponent(urlEncoded);
   if(!url){alert('تعذر فتح صورة المشاركة. حدّثي البيانات ثم حاولي مرة أخرى.');return;}
+  const displayTitle='شراكة الأسرة • '+title;
   const oldText=btn.textContent;btn.disabled=true;btn.textContent='⏳ جارٍ العرض...';
   try{
+    // منع تكرار نفس المشاركة في المعرض.
+    const existing=await sb.from('featured_works')
+      .select('id')
+      .eq('student_name',name)
+      .eq('lesson_title',displayTitle)
+      .order('created_at',{ascending:false})
+      .limit(1);
+    if(!existing.error && existing.data?.length){
+      btn.textContent='✅ معروضة في المنصة';
+      return;
+    }
+
     const resp=await fetch(url);if(!resp.ok)throw new Error('تعذر تحميل الصورة');
     const blob=await resp.blob();
     const ext=(blob.type&&blob.type.includes('/'))?blob.type.split('/')[1].replace('jpeg','jpg'):'jpg';
     const file=new File([blob],`family-${Date.now()}.${ext}`,{type:blob.type||'image/jpeg'});
-    const fd=new FormData();fd.set('action','upload_featured');fd.set('student_name',name);fd.set('lesson_title','شراكة الأسرة • '+title);fd.set('file',file);
+    const fd=new FormData();fd.set('action','upload_featured');fd.set('student_name',name);fd.set('lesson_title',displayTitle);fd.set('file',file);
     await teacherApi(fd,true);
     btn.textContent='✅ معروضة في المنصة';
     await loadPublicGallery();await loadTeacherGalleryLists();
   }catch(e){btn.disabled=false;btn.textContent=oldText;alert('تعذر عرض المشاركة: '+e.message);}
 }
 async function teacherDeletePrivate(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='score'?'delete_score':'delete_family',id});await loadTeacherPrivateData();}catch(e){alert(e.message);}}
+
+async function removeFamilyFromShowcase(btn,nameEncoded,titleEncoded){
+  const name=decodeURIComponent(nameEncoded), title=decodeURIComponent(titleEncoded);
+  const displayTitle='شراكة الأسرة • '+title;
+  if(!confirm('حذف هذه المشاركة من العرض؟'))return;
+  const oldText=btn.textContent;btn.disabled=true;btn.textContent='⏳ جارٍ الحذف...';
+  try{
+    const {data,error}=await sb.from('featured_works')
+      .select('id')
+      .eq('student_name',name)
+      .eq('lesson_title',displayTitle)
+      .order('created_at',{ascending:false})
+      .limit(1);
+    if(error)throw error;
+    if(!data?.length){
+      btn.disabled=false;btn.textContent='🗑 حذف من العرض';
+      alert('هذه المشاركة غير موجودة في العرض.');
+      return;
+    }
+    await teacherApi({action:'delete_featured',id:data[0].id});
+    btn.disabled=false;btn.textContent='🗑 حذف من العرض';
+    await loadPublicGallery();await loadTeacherGalleryLists();
+    alert('✅ تم حذف نسخة واحدة من العرض.');
+  }catch(e){
+    btn.disabled=false;btn.textContent=oldText;alert('تعذر الحذف من العرض: '+e.message);
+  }
+}
+
 
 let visitorMode=false;
 const VISITOR_PASSWORD='000';
