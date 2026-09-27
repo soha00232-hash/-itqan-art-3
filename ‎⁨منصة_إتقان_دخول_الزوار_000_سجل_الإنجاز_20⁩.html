@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة إتقان للتربية الفنية</title>
+<style>
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#fbf8ff;color:#30283a}
+header{background:#fff;padding:18px;text-align:center;border-bottom:1px solid #eee}
+.logo{font-size:38px}.wrap{max-width:820px;margin:auto;padding:16px}
+.hero,.card{background:#fff;border-radius:26px;padding:22px;margin:15px 0;box-shadow:0 8px 25px #6d4b8b18}
+.hero{text-align:center;background:linear-gradient(135deg,#dec1ff,#ffb7dc)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+a{text-decoration:none;color:inherit}.navcard{text-align:center;display:block}.navcard span{font-size:42px;display:block}
+.section{display:none}#home{display:block}
+.navbtn{width:100%;border:0;background:transparent;font:inherit;color:inherit;cursor:pointer;padding:0;text-align:inherit}
+.btn{display:inline-block;border-radius:16px;padding:14px 18px;background:#efe2ff;margin:5px 0}
+.lesson-card{text-align:center}.icon{font-size:58px}.box{background:#faf4ff;border-radius:18px;padding:17px;line-height:1.9;margin:12px 0}
+details{background:#fff;border-radius:24px;padding:18px;margin:15px 0;box-shadow:0 8px 25px #6d4b8b18}
+summary{cursor:pointer;font-size:21px;font-weight:700;list-style:none;text-align:center}
+summary::-webkit-details-marker{display:none}
+.choice{display:block;width:100%;border:0;border-radius:15px;padding:14px;margin:8px 0;font-size:16px;background:#f1e7ff;cursor:pointer;font-family:inherit;color:#30283a}.choice.correct{background:#dff6e5}.choice.wrong{background:#ffe4e4}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.gallery-item{background:#fff8fc;border:2px dashed #e0c9ee;border-radius:18px;padding:18px;text-align:center;min-height:130px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.record-row{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #eee}.record-row:last-child{border-bottom:0}.record-label{font-weight:700}.score-pill{display:inline-block;background:#efe2ff;border-radius:999px;padding:6px 12px;font-weight:700}.perfect{background:#fff2ba}.muted{color:#766f7c;font-size:14px}
+@media(max-width:560px){.wrap{padding:12px}.grid{grid-template-columns:1fr 1fr}.gallery-grid{grid-template-columns:1fr}.card{padding:18px}}
+
+.answer-area{margin:10px 0 18px;padding:14px;border-radius:18px;background:#fff8fc;border:1px dashed #d8b8ea}
+.answer-area textarea{width:100%;min-height:82px;border:1px solid #ddd;border-radius:14px;padding:12px;font-family:inherit;font-size:16px;resize:vertical}
+.answer-area label{display:block;font-weight:700;margin-bottom:8px}
+
+.login-form{display:grid;gap:12px;margin-top:16px}.login-form select,.login-form input{width:100%;padding:14px;border:1px solid #ddd;border-radius:14px;font-family:inherit;font-size:16px;background:#fff;color:#30283a}.login-submit{width:100%;border:0;border-radius:16px;padding:14px 18px;background:#dec1ff;font-family:inherit;font-size:17px;font-weight:700;color:#30283a;cursor:pointer}.login-msg{margin-top:12px;padding:14px;border-radius:14px;background:#faf4ff;display:none}.student-welcome{text-align:center}.student-badge{display:inline-block;background:#f4eaff;border-radius:999px;padding:8px 14px;margin:5px}.logout-btn{border:0;background:#ffe8ef;color:#7a3150;border-radius:14px;padding:10px 14px;font-family:inherit;cursor:pointer}
+
+.teacher-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.teacher-tab{border:0;border-radius:14px;padding:10px 12px;background:#f3e9ff;font:inherit;cursor:pointer}.teacher-panel{display:none}.teacher-panel.active{display:block}.teacher-list{display:grid;gap:10px}.teacher-row{background:#fff8fc;border:1px solid #eadcf1;border-radius:16px;padding:12px}.teacher-row img{width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-top:8px}.danger-btn{border:0;background:#ffe4e4;color:#8a2946;border-radius:12px;padding:8px 11px;font:inherit;cursor:pointer}.gallery-img{width:100%;height:220px;object-fit:cover;border-radius:14px;margin-bottom:10px}.teacher-upload input,.teacher-upload select{width:100%;padding:13px;border:1px solid #ddd;border-radius:14px;font-family:inherit;font-size:16px;background:#fff;color:#30283a}.teacher-upload{display:grid;gap:10px}.private-note{background:#fff4d8;border-radius:14px;padding:10px;font-size:14px}.loading{text-align:center;padding:16px;color:#766f7c}
+.record-section{background:#fff8fc;border:1px solid #eadcf1;border-radius:20px;padding:14px;margin:14px 0}
+.record-section h3{margin:0 0 10px}
+.record-student{background:#fff;border-radius:22px;padding:16px;margin:14px 0;border:1px solid #eee}
+.record-student-title{font-size:20px;font-weight:800;margin-bottom:10px}
+.record-mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.record-mini-grid img{width:100%;height:180px;object-fit:cover;border-radius:14px}
+@media(max-width:560px){.record-mini-grid{grid-template-columns:1fr 1fr}.record-mini-grid img{height:150px}}
+
+/* ===== Achievement record evaluation ===== */
+.eval-card{background:linear-gradient(180deg,#fffafd,#ffffff);border:1px solid #efdfea;border-radius:22px;padding:16px;margin-top:16px}
+.eval-card h3{margin:0 0 8px;color:#51445f}.eval-sub{color:#7b7180;font-size:14px;margin-bottom:14px}
+.eval-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}
+.eval-toolbar select{width:100%;padding:12px;border:1px solid #e5d9e9;border-radius:14px;background:#fff;font-family:inherit}
+.eval-grid{display:grid;gap:10px}.eval-row{display:grid;grid-template-columns:minmax(210px,1.7fr) repeat(4,minmax(90px,1fr));gap:8px;align-items:center;padding:10px;border:1px solid #f0e7ef;border-radius:16px;background:#fff}
+.eval-criterion{font-weight:700;color:#4c4352}.eval-choice{border:1px solid #e8dce7;background:#faf8fb;border-radius:12px;padding:9px 8px;cursor:pointer;font-family:inherit;font-size:13px}.eval-choice.selected{background:#f4ddec;border-color:#d894bb;font-weight:700;box-shadow:0 0 0 2px #f7e8f1 inset}.eval-choice[data-value="4"].selected{background:#dff5ee;border-color:#79cdb4}.eval-choice[data-value="3"].selected{background:#e5f2ff;border-color:#8fc1e9}.eval-choice[data-value="2"].selected{background:#fff3d9;border-color:#e2bd6f}.eval-choice[data-value="1"].selected{background:#ffe4ea;border-color:#e6a0ae}
+.eval-summary{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:14px;padding:14px;border-radius:16px;background:#fff5fa}.eval-total{font-size:20px;font-weight:800}.eval-save{border:0;border-radius:14px;padding:12px 18px;background:#e994be;color:#fff;font-weight:800;font-family:inherit;cursor:pointer}.eval-save:disabled{opacity:.55;cursor:not-allowed}.eval-status{margin-top:10px;font-size:14px}
+.eval-view{display:grid;gap:8px}.eval-view-row{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border-bottom:1px dashed #eaddea}.eval-view-row:last-child{border-bottom:0}.eval-view-badge{display:inline-block;padding:5px 10px;border-radius:999px;background:#f5e7f0;font-weight:700;white-space:nowrap}.eval-overall{display:flex;justify-content:space-between;gap:12px;align-items:center;background:#fff5fa;border:1px solid #efdeea;border-radius:16px;padding:13px;margin-top:12px;font-weight:800}
+@media(max-width:780px){.eval-row{grid-template-columns:1fr 1fr}.eval-criterion{grid-column:1/-1}.eval-toolbar{grid-template-columns:1fr}.eval-choice{font-size:12px}.eval-overall,.eval-view-row{align-items:flex-start}}
+
+</style>
+</head>
+<body>
+<header><div class="logo">🎨</div><b>إتقان</b><div>منصة التربية الفنية | الصف الثالث الابتدائي</div></header>
+<main class="wrap">
+
+<section id="home">
+<div class="hero"><h1>أهلًا بكِ في منصة إتقان 🎨</h1><p>تعلمي، جربي، وشاركي إبداعك.</p></div>
+<div class="grid">
+<button class="card navcard navbtn" type="button" onclick="enterStudentMode()"><span>👧</span><b>دخول الطالبة</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('star')"><span>⭐</span><b>نجمة إتقان</b></button>
+<button class="card navcard navbtn" type="button" onclick="showSection('teacher')"><span>🔐</span><b>لوحة المعلمة</b></button>
+<button class="card navcard navbtn" type="button" onclick="openVisitorMode()"><span>👩‍💼</span><b>دخول الزوار</b></button>
+</div>
+</section>
+
+
+<section id="manager" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+
+<div class="card" id="visitorLoginCard" style="text-align:center">
+  <div style="font-size:52px">👩‍💼</div>
+  <h2>دخول الزوار</h2>
+  <p>أدخلي الرقم السري لعرض المنصة بصلاحية الزائر.</p>
+  <div class="login-form">
+    <label><b>الرقم السري</b></label>
+    <input id="visitorPassword" type="password" inputmode="numeric" placeholder="أدخلي الرقم السري">
+    <button class="login-submit" type="button" onclick="visitorLogin()">دخول 🔐</button>
+    <div id="visitorLoginMsg" class="login-msg"></div>
+  </div>
+</div>
+
+<div id="visitorDashboard" style="display:none">
+  <div class="card" style="text-align:center">
+    <div style="font-size:52px">👩‍💼</div>
+    <h2>مرحبًا بكِ في منصة إتقان</h2>
+    <p>يمكنكِ استعراض جميع أقسام المنصة، بما فيها سجلات الإنجاز وتقييماتها.</p>
+    <div class="grid" style="margin-top:16px">
+      <button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
+      <button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات وسجلات الإنجاز</b></button>
+      <button class="card navcard navbtn" type="button" onclick="showVisitorStar()"><span>⭐</span><b>نجمة إتقان</b></button>
+    </div>
+    <div class="private-note" style="margin-top:16px">وضع مشاهدة للزوار دون الحاجة لاختيار فصل أو اسم طالبة.</div>
+    <div style="margin-top:12px"><button class="logout-btn" type="button" onclick="visitorLogout()">خروج الزائر</button></div>
+  </div>
+</div>
+</section>
+
+<section id="student" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+<div class="card" id="loginCard">
+<h2>👧 دخول الطالبة</h2>
+<p>اختاري فصلك ثم اختاري اسمك من القائمة واضغطي دخول.</p>
+<div class="login-form">
+<label><b>الفصل</b></label>
+<select id="studentClass" onchange="populateStudentNames()">
+<option value="">اختاري الفصل</option>
+<option value="ثالث/١">ثالث/١</option>
+<option value="ثالث/٣">ثالث/٣</option>
+</select>
+<label><b>اسم الطالبة</b></label>
+<select id="studentName">
+<option value="">اختاري اسم الطالبة</option>
+</select>
+<button class="login-submit" type="button" onclick="studentLogin()">دخول 🎨</button>
+<div id="loginMsg" class="login-msg"></div>
+</div>
+</div>
+<div class="card student-welcome" id="studentWelcome" style="display:none">
+<div style="font-size:48px">🌟</div>
+<h2 id="welcomeName">أهلًا بكِ</h2>
+<div><span class="student-badge" id="welcomeClass"></span></div>
+<p>تم تسجيل دخولك بنجاح. يمكنك الآن البدء بالدروس والاختبارات.</p>
+<button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button>
+<div style="margin-top:12px"><button class="logout-btn" type="button" onclick="studentLogout()">تغيير الطالبة</button></div>
+</div>
+</section>
+
+<section id="lessons" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+<div class="card"><h2>📚 الدروس والاختبارات</h2><p>اضغطي على بطاقة الدرس لفتحه:</p></div>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('sketch')"><div class="icon">✏️</div><h2>الاسكتش</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('folk')"><div class="icon">🏺</div><h2>الزخارف الشعبية السعودية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('textures')"><div class="icon">🖌️</div><h2>تكوينات وملامس مطبوعة</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('geometry')"><div class="icon">🔷</div><h2>أطبع بوحداتي الهندسية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('surfaceprints')"><div class="icon">🧽</div><h2>طباعة وحدات ذات ملامس مختلفة</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('weaving')"><div class="icon">🧶</div><h2>النسيج البسيط الملون</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+</section>
+
+<section id="sketch" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>✏️ الاسكتش</h1><p>تعلمي الفكرة ثم جربيها.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تتعرف الطالبة على مفهوم الاسكتش وتطبقه بصورة مبسطة.</div><h2>💡 فكرة الدرس</h2><p>الاسكتش رسم أولي سريع بخطوط بسيطة يساعد الفنانة على تسجيل فكرتها قبل إضافة التفاصيل.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">ارسمي اسكتشًا بسيطًا باستخدام خطوط خفيفة، ثم طوريه إلى رسم أكثر اكتمالًا.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أحد أفراد الأسرة شيئًا بسيطًا من المنزل وارسموا له اسكتشًا سريعًا، ثم أضيفي صورة المشاركة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-sketch" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-sketch" type="file" accept="image/*" onchange="previewFamily(this,'sketch')"><img id="familyPreview-sketch" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('sketch','الاسكتش')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-sketch" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: بدأتِ برسم كوب بخطوط خفيفة وحددتِ شكله العام قبل إضافة التفاصيل. ماذا يسمى هذا العمل؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',1,true)">اسكتش أولي يوضح الفكرة</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',1,false)">رسم نهائي مكتمل التفاصيل</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',1,false)">وحدة زخرفية متكررة</button><div id="sketch-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: إذا أخطأتِ في أحد خطوط الاسكتش، فما التصرف الأنسب؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',2,false)">أضغط بالقلم أكثر حتى أخفي الخطأ</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',2,true)">أعدل الخط بخفة وأستمر في بناء الشكل</button><button type="button" class="choice" onclick="gradeLessonQ(this,'sketch',2,false)">أبدأ بالتلوين قبل تصحيح الشكل</button><div id="sketch-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('sketch')">إظهار الدرجة</button><div id="sketch-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="folk" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🏺 الزخارف الشعبية السعودية</h1><p>نتعرف على جمال الزخارف الشعبية في تراثنا السعودي.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تتعرف الطالبة على بعض سمات الزخارف الشعبية السعودية وتوظفها في تكوين زخرفي بسيط.</div><h2>💡 فكرة الدرس</h2><p>تتميز الزخارف الشعبية السعودية بتنوع الخطوط والأشكال والألوان وتظهر في البيوت والأبواب والمنسوجات والحرف التقليدية.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">صممي وحدة زخرفية مستوحاة من الزخارف الشعبية السعودية ثم كرريها بشكل منظم.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">ابحثي مع أسرتك عن زخرفة شعبية سعودية في المنزل أو في صورة تراثية، ثم التقطي صورة للمشاركة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-folk" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-folk" type="file" accept="image/*" onchange="previewFamily(this,'folk')"><img id="familyPreview-folk" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('folk','الزخارف الشعبية السعودية')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-folk" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: أي وصف يعبّر بصورة أدق عن الزخارف الشعبية السعودية؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,true)">أشكال وخطوط وألوان مستوحاة من التراث والبيئة المحلية</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,false)">رسوم حرة لا تعتمد على تكرار أو تنظيم</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,false)">أشكال حديثة لا ترتبط بالموروث الشعبي</button><div id="folk-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: لديكِ وحدة زخرفية واحدة وتريدين تكوين شريط متوازن، أي طريقة أفضل؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,false)">تغيير شكل الوحدة في كل مرة دون نظام</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,true)">تكرار الوحدة بنظام مع المحافظة على الإيقاع والتناسق</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,false)">رسم الوحدات بأحجام عشوائية ومتباعدة جدًا</button><div id="folk-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('folk')">إظهار الدرجة</button><div id="folk-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="textures" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🖌️ تكوينات وملامس مطبوعة</h1><p>نكتشف الملامس ونحولها إلى تكوينات مطبوعة جميلة.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تميز الطالبة بين الملامس المختلفة وتوظفها في تكوين مطبوع.</div><h2>💡 فكرة الدرس</h2><p>الملمس هو الإحساس بسطح الشيء، ويمكن الاستفادة من الأسطح المختلفة لعمل طبعات متنوعة.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">اختاري خامات ذات ملامس متنوعة وكوني منها تكوينًا مطبوعًا متوازنًا.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك خامتين آمنتين ذواتي ملمسين مختلفين، ثم جربي طباعتهما وقارني النتيجة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-textures" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-textures" type="file" accept="image/*" onchange="previewFamily(this,'textures')"><img id="familyPreview-textures" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('textures','تكوينات وملامس مطبوعة')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-textures" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: طبعتِ بورقة شجر وقطعة إسفنج فظهر لكل منهما أثر مختلف. ما السبب؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',1,true)">اختلاف ملمس السطحين</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',1,false)">اختلاف اسم الخامتين فقط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',1,false)">اختلاف مكان الطباعة على الورقة فقط</button><div id="textures-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: إذا أردتِ تكوينًا مطبوعًا متنوعًا وواضحًا، ماذا تختارين؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',2,false)">خامات متشابهة جدًا تعطي الأثر نفسه</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',2,true)">خامات ذات ملامس مختلفة مع توزيع منظم للطبعات</button><button type="button" class="choice" onclick="gradeLessonQ(this,'textures',2,false)">زيادة اللون على الخامة دون تجربة الأثر أولًا</button><div id="textures-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('textures')">إظهار الدرجة</button><div id="textures-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="geometry" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🔷 أطبع بوحداتي الهندسية</h1><p>نستخدم الأشكال الهندسية لبناء وحدات طباعية منظمة.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن توظف الطالبة الوحدات الهندسية في تكوين طباعي منظم.</div><h2>💡 فكرة الدرس</h2><p>يمكن تحويل المربع والمثلث والدائرة وغيرها إلى وحدات تتكرر في أنماط جميلة.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">كوّني وحدة هندسية ثم كرري طباعتها بنظام واضح.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك ثلاثة أشكال هندسية من أشياء موجودة في المنزل وحددي كيف يمكن استخدامها كوحدات طباعية.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-geometry" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-geometry" type="file" accept="image/*" onchange="previewFamily(this,'geometry')"><img id="familyPreview-geometry" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('geometry','أطبع بوحداتي الهندسية')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-geometry" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: أردتِ تصميم وحدة للطباعة باستخدام شكلين هندسيين. أي اختيار يحقق ذلك؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',1,true)">دمج مثلث ودائرة في وحدة واحدة ثم تكرارها</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',1,false)">استخدام خطوط عشوائية دون وحدة محددة</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',1,false)">رسم شكل مختلف تمامًا في كل طبعة</button><div id="geometry-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: لاحظتِ أن الطبعات متقاربة في جهة ومتباعدة جدًا في جهة أخرى. ماذا يحتاج التكوين؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',2,true)">إعادة تنظيم توزيع الوحدات لتحقيق توازن أفضل</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',2,false)">إضافة وحدات عشوائية في أي مكان</button><button type="button" class="choice" onclick="gradeLessonQ(this,'geometry',2,false)">تغيير جميع الأشكال الهندسية إلى أشكال حرة</button><div id="geometry-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('geometry')">إظهار الدرجة</button><div id="geometry-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="surfaceprints" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🧽 طباعة وحدات ذات ملامس مختلفة</h1><p>نجرب الطباعة بوحدات متنوعة الملمس ونقارن آثارها.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تطبع الطالبة وحدات ذات ملامس مختلفة وتلاحظ اختلاف الأثر الطباعي.</div><h2>💡 فكرة الدرس</h2><p>اختلاف ملمس الوحدة يؤدي إلى اختلاف شكل الأثر المطبوع.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">جربي طباعتين بوحدتين مختلفتي الملمس ثم قارني بين الأثرين.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك وحدتين آمنتين مختلفتي الملمس، وصوري أثر كل منهما بعد الطباعة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-surfaceprints" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-surfaceprints" type="file" accept="image/*" onchange="previewFamily(this,'surfaceprints')"><img id="familyPreview-surfaceprints" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('surfaceprints','طباعة وحدات ذات ملامس مختلفة')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-surfaceprints" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: استخدمتِ وحدتين بالحجم نفسه، لكن إحداهما خشنة والأخرى ناعمة. ما المتوقع عند الطباعة؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',1,false)">سيكون الأثر متطابقًا لأن الحجم واحد</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',1,true)">سيختلف الأثر لأن ملمس كل وحدة مختلف</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',1,false)">لن يظهر أي أثر إلا إذا اختلف لون الورق</button><div id="surfaceprints-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: إذا كانت إحدى الطبعات غير واضحة بسبب زيادة اللون، ماذا تفعلين في المحاولة التالية؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',2,false)">أزيد كمية اللون أكثر</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',2,true)">أستخدم كمية أنسب من اللون وأجرب الوحدة قبل الطباعة النهائية</button><button type="button" class="choice" onclick="gradeLessonQ(this,'surfaceprints',2,false)">أضغط على الورقة بعد جفاف الطبعة فقط</button><div id="surfaceprints-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('surfaceprints')">إظهار الدرجة</button><div id="surfaceprints-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="weaving" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🧶 النسيج البسيط الملون</h1><p>نتعلم فكرة التعاشق ونكوّن نسيجًا بسيطًا بالألوان.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تنفذ الطالبة نسيجًا بسيطًا ملونًا باستخدام التعاشق المنتظم.</div><h2>💡 فكرة الدرس</h2><p>يقوم النسيج البسيط على مرور الشرائط بالتبادل فوق وتحت لتكوين تعاشق منظم.</p><h2>🎨 المطلوب من الدرس</h2><div class="box">نفذي نسيجًا ورقيًا بسيطًا بلونين أو أكثر مع المحافظة على التعاشق المنتظم.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">اختاري مع أسرتك لونين متناسقين للنسيج، وساعديهم في ملاحظة تكرار نمط فوق/تحت.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-weaving" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-weaving" type="file" accept="image/*" onchange="previewFamily(this,'weaving')"><img id="familyPreview-weaving" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('weaving','النسيج البسيط الملون')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-weaving" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: أثناء النسيج مرّ الشريط الأول فوق خيط ثم تحت الذي يليه. كيف يبدأ الشريط التالي حتى يستمر التعاشق الصحيح؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',1,false)">يبدأ بالطريقة نفسها: فوق ثم تحت</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',1,true)">يبدأ بالعكس: تحت ثم فوق</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',1,false)">يوضع فوق جميع الخيوط دون تعاشق</button><div id="weaving-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: ظهر في جزء من النسيج شريطان متتاليان فوق الخيط نفسه، ماذا يعني ذلك؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',2,true)">هناك خطأ في نمط التعاشق ويجب تصحيحه</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',2,false)">هذا دليل أن النسيج أصبح أقوى بالضرورة</button><button type="button" class="choice" onclick="gradeLessonQ(this,'weaving',2,false)">لا يؤثر ذلك في انتظام النسيج</button><div id="weaving-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('weaving')">إظهار الدرجة</button><div id="weaving-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
+<section id="gallery" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+<div class="hero"><h1>🎨 مبدعات</h1><p>الأعمال المتميزة ومشاركات الأسرة.</p></div>
+<div class="card"><h2>🌟 الأعمال المتميزة</h2><p class="muted">صورة العمل + اسم الطالبة + اسم الدرس.</p><div id="featuredGallery" class="gallery-grid"><div class="loading">جارٍ تحميل الأعمال...</div></div></div>
+<div class="card"><h2>🤝 مشاركات الأسرة المتميزة</h2><p class="muted">المشاركات التي تختارها المعلمة للعرض.</p><div id="familyShowcaseGallery" class="gallery-grid"><div class="loading">جارٍ تحميل المشاركات...</div></div></div>
+<div class="card" id="recordsCard" style="display:none"><h2>📘 سجلات الإنجاز</h2><p class="muted">صور سجلات الإنجاز المضافة بواسطة المعلمة.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
+</section>
+
+
+<section id="myRecord" class="section">
+<button class="btn" type="button" onclick="showSection('student')">← رجوع</button>
+<div class="hero"><h1>📘 سجل إنجازي</h1><p id="myRecordStudent"></p></div>
+<div class="card">
+  <div class="record-section"><h3>📄 أوراق العمل</h3><div id="myWorksheets" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="myPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="mySpecial" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="myRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
+</div>
+</section>
+
+
+<section id="directorRecord" class="section">
+<button class="btn" type="button" onclick="showSection('gallery')">← رجوع إلى سجلات الإنجاز</button>
+<div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للمديرة</p></div>
+<div class="card">
+  <div class="record-section"><h3>📄 أوراق العمل</h3><div id="directorWorksheets" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="directorPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="directorSpecial" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="directorRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
+</div>
+</section>
+
+<section id="teacher" class="section">
+<button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
+<div class="hero"><h1>🔐 لوحة المعلمة</h1><p>خاصة بالمعلمة سهى.</p></div>
+<div class="card" id="teacherLoginCard">
+<h2>دخول المعلمة</h2>
+<div class="private-note">البريد المعتمد: soha00232@gmail.com</div>
+<div class="login-form"><label><b>رمز المعلمة</b></label><input id="teacherPassword" type="password" placeholder="أدخلي رمز المعلمة"><button class="login-submit" type="button" onclick="teacherLogin()">دخول</button><div id="teacherLoginMsg" class="login-msg"></div></div>
+</div>
+<div id="teacherDashboard" style="display:none">
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">أهلًا سهى 👩‍🏫</h2><div class="muted">إدارة الأعمال والسجلات والدرجات ومشاركات الأسرة.</div></div><button class="logout-btn" type="button" onclick="teacherLogout()">خروج</button></div></div>
+<div class="teacher-tabs">
+<button class="teacher-tab" onclick="showTeacherTab('uploadWork')">🌟 عمل متميز</button>
+<button class="teacher-tab" onclick="showTeacherTab('uploadRecord')">📘 سجل إنجاز</button>
+<button class="teacher-tab" onclick="showTeacherTab('recordEvaluation')">✅ تقييم السجل</button>
+<button class="teacher-tab" onclick="showTeacherTab('scores')">📊 الدرجات</button>
+<button class="teacher-tab" onclick="showTeacherTab('family')">🤝 مشاركات الأسرة</button>
+</div>
+<div id="uploadWork" class="card teacher-panel active"><h2>رفع عمل متميز</h2><div class="teacher-upload"><input id="workStudentName" type="text" placeholder="اسم الطالبة"><select id="workLessonTitle"><option value="">اختاري الدرس</option><option>الاسكتش</option><option>الزخارف الشعبية السعودية</option><option>تكوينات وملامس مطبوعة</option><option>أطبع بوحداتي الهندسية</option><option>طباعة وحدات ذات ملامس مختلفة</option><option>النسيج البسيط الملون</option></select><input id="workFile" type="file" accept="image/*"><button class="login-submit" onclick="teacherUpload('featured')">رفع العمل</button><div id="workStatus" class="login-msg"></div></div><div id="teacherFeaturedList" class="teacher-list" style="margin-top:14px"></div></div>
+<div id="uploadRecord" class="card teacher-panel"><h2>📘 سجل إنجاز الطالبة</h2>
+    <p class="muted">اختاري اسم الطالبة والقسم، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
+    <div class="teacher-upload">
+      <input id="recordStudentName" type="text" placeholder="اسم الطالبة">
+      <select id="recordCategory">
+        <option value="">اختاري القسم</option>
+        <option value="أوراق العمل">📄 أوراق العمل</option>
+        <option value="المهام الأدائية">⭐ المهام الأدائية</option>
+        <option value="أعمالي المميزة">🎨 أعمالي المميزة</option>
+      </select>
+      <input id="recordFile" type="file" accept="image/*" multiple>
+      <button class="login-submit" onclick="teacherUploadRecordMulti()">+ إضافة الصور إلى سجل الطالبة</button>
+      <div id="recordStatus" class="login-msg"></div>
+    </div>
+    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div><div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div>
+
+<div id="recordEvaluation" class="card teacher-panel">
+  <h2>✅ تقييم سجل الإنجاز</h2>
+  <p class="muted">اختاري الفصل والطالبة، ثم حددي مستوى كل معيار. الدرجة النهائية لسجل الإنجاز من 20 نقطة.</p>
+  <div class="eval-toolbar">
+    <select id="evalClass" onchange="populateEvalStudents()"><option value="">اختاري الفصل</option><option value="ثالث/١">ثالث/١</option><option value="ثالث/٣">ثالث/٣</option></select>
+    <select id="evalStudent" onchange="loadExistingEvaluationForTeacher()"><option value="">اختاري الطالبة</option></select>
+  </div>
+  <div id="recordEvalCriteria" class="eval-grid"></div>
+  <div class="eval-summary">
+    <div><div class="muted">مجموع الدرجات</div><div id="recordEvalTotal" class="eval-total">0 / 20</div></div>
+    <div><div class="muted">التقدير العام</div><div id="recordEvalOverall" class="eval-total">—</div></div>
+    <button id="recordEvalSaveBtn" class="eval-save" type="button" onclick="saveAchievementEvaluation()">حفظ التقييم</button>
+  </div>
+  <div id="recordEvalStatus" class="eval-status"></div>
+</div>
+<div id="scores" class="card teacher-panel"><h2>📊 درجات الطالبات</h2><p class="muted">هذه البيانات تظهر لكِ فقط داخل لوحة المعلمة.</p><div id="teacherScoresList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
+<div id="family" class="card teacher-panel"><h2>🤝 مشاركات الأسرة</h2><p class="muted">الصور المرسلة من قسم شراكة الأسرة داخل الدروس.</p><div id="teacherFamilyList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
+</div>
+</section>
+<section id="star" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>⭐ نجمة إتقان</h2><div id="starStatus"><p>أكملي الاختبارات لتحصلي على نجمة إتقان.</p></div></div></section>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://qkegutmfdbtlunbvrzgt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_od0E1kpfsZtSCh9Hkj8hLA_ihCiU7xN';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const lessonTitles = {sketch:'الاسكتش',folk:'الزخارف الشعبية السعودية',textures:'تكوينات وملامس مطبوعة',geometry:'أطبع بوحداتي الهندسية',surfaceprints:'طباعة وحدات ذات ملامس مختلفة',weaving:'النسيج البسيط الملون'};
+const TEACHER_ENDPOINT = SUPABASE_URL + '/functions/v1/itqan-teacher';
+function esc(v){return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
+function publicImageUrl(path){return sb.storage.from('teacher-gallery').getPublicUrl(path).data.publicUrl;}
+async function loadPublicGallery(){
+  const f=document.getElementById('featuredGallery'),
+        fs=document.getElementById('familyShowcaseGallery'),
+        r=document.getElementById('recordsGallery'),
+        recordsCard=document.getElementById('recordsCard');
+  if(!f||!fs)return;
+
+  const canViewRecords = visitorMode || !!teacherPass();
+  if(recordsCard) recordsCard.style.display=canViewRecords?'block':'none';
+
+  f.innerHTML='<div class="loading">جارٍ تحميل الأعمال...</div>';
+  fs.innerHTML='<div class="loading">جارٍ تحميل المشاركات...</div>';
+  if(r) r.innerHTML=canViewRecords?'<div class="loading">جارٍ تحميل السجلات...</div>':'';
+
+  const fw=await sb.from('featured_works').select('*').order('created_at',{ascending:false});
+  let ar={data:[],error:null};
+  if(canViewRecords){
+    ar=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
+  }
+
+  if(fw.error){
+    f.innerHTML='<div class="muted">تعذر تحميل الأعمال الآن.</div>';
+    fs.innerHTML='<div class="muted">تعذر تحميل المشاركات الآن.</div>';
+  }else{
+    const all=fw.data||[];
+    const family=all.filter(x=>String(x.lesson_title||'').startsWith('شراكة الأسرة • '));
+    const works=all.filter(x=>!String(x.lesson_title||'').startsWith('شراكة الأسرة • '));
+    f.innerHTML=works.length?works.map(x=>`<div class="gallery-item"><img class="gallery-img" src="${publicImageUrl(x.image_path)}" alt="عمل متميز"><b>${esc(x.student_name)}</b><span class="muted">${esc(x.lesson_title)}</span></div>`).join(''):'<div class="gallery-item">🌟<b>سيتم إضافة الأعمال المتميزة هنا</b></div>';
+    fs.innerHTML=family.length?family.map(x=>`<div class="gallery-item"><img class="gallery-img" src="${publicImageUrl(x.image_path)}" alt="مشاركة أسرة متميزة"><b>${esc(x.student_name)}</b><span class="muted">${esc(String(x.lesson_title).replace('شراكة الأسرة • ',''))}</span></div>`).join(''):'<div class="gallery-item">🤝<b>لا توجد مشاركة مختارة للعرض بعد</b></div>';
+  }
+
+  if(!canViewRecords || !r) return;
+  if(ar.error) r.innerHTML='<div class="muted">تعذر تحميل السجلات الآن.</div>';
+  else if(!ar.data?.length) r.innerHTML='<div class="gallery-item">📘<b>سيتم إضافة سجلات الإنجاز هنا</b></div>';
+  else {
+    const grouped={};
+    (ar.data||[]).forEach(x=>{const p=parseRecordStudent(x.student_name);(grouped[p.name]=grouped[p.name]||[]).push({...x,_cat:p.category});});
+    r.innerHTML=Object.entries(grouped).map(([name,rows])=>`<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}')"><b style="font-size:18px">${esc(name)}</b><div class="muted">${rows.length} صورة في سجل الإنجاز — اضغطي لفتح السجل كاملًا</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`).join('');
+  }
+}
+
+function encodeRecordStudent(name,category){return name+'|||'+category;}
+function parseRecordStudent(v){
+  const parts=String(v||'').split('|||');
+  return {name:parts[0]||'',category:parts[1]||'عام'};
+}
+async function teacherUploadRecordMulti(){
+  const status=document.getElementById('recordStatus');
+  const name=document.getElementById('recordStudentName').value.trim();
+  const category=document.getElementById('recordCategory').value;
+  const files=Array.from(document.getElementById('recordFile').files||[]);
+  status.style.display='block';
+  if(!name){status.textContent='🌷 اكتبي اسم الطالبة.';return;}
+  if(!category){status.textContent='🌷 اختاري قسم سجل الإنجاز.';return;}
+  if(!files.length){status.textContent='🌷 اختاري صورة واحدة أو أكثر.';return;}
+  status.textContent=`⏳ جارٍ رفع ${files.length} صورة...`;
+  let done=0;
+  try{
+    for(const file of files){
+      const fd=new FormData();
+      fd.set('action','upload_record');
+      fd.set('student_name',encodeRecordStudent(name,category));
+      fd.set('file',file);
+      await teacherApi(fd,true);
+      done++;
+      status.textContent=`⏳ تم رفع ${done} من ${files.length}...`;
+    }
+    status.textContent=`✅ تم إضافة ${done} صورة إلى قسم «${category}» في سجل ${name}.`;
+    document.getElementById('recordFile').value='';
+    await loadTeacherGalleryLists();
+    await loadPublicGallery();
+  }catch(e){status.textContent='❌ '+e.message;}
+}
+
+async function openDirectorRecord(nameEncoded){
+  if(!(visitorMode || !!teacherPass())){ showSection('home'); return; }
+  const name=decodeURIComponent(nameEncoded);
+  showSection('directorRecord');
+  document.getElementById('directorRecordName').textContent=name;
+  loadAchievementEvaluationView(name,null,'directorRecordEvaluation');
+  const boxMap={'أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance','أعمالي المميزة':'directorSpecial'};
+  Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ تحميل الصور...</div>');
+  const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
+  if(error){
+    Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="muted">تعذر تحميل السجل الآن.</div>');
+    return;
+  }
+  for(const [cat,id] of Object.entries(boxMap)){
+    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===name&&p.category===cat;});
+    document.getElementById(id).innerHTML=rows.length
+      ? rows.map(x=>`<a href="${publicImageUrl(x.image_path)}" target="_blank" rel="noopener"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"></a>`).join('')
+      : '<div class="muted">لا توجد صور مضافة في هذا القسم بعد.</div>';
+  }
+}
+
+async function openMyAchievementRecord(){
+  // سجلات الإنجاز مخصصة للمعلمة والزائر المصرح له فقط.
+  showSection('student');
+}
+
+function teacherPass(){return sessionStorage.getItem('itqanTeacherPass')||'';}
+async function teacherApi(payload,form=false){
+  const opts={method:'POST'};
+  if(form){payload.set('password',teacherPass());opts.body=payload;}
+  else{opts.headers={'Content-Type':'application/json'};opts.body=JSON.stringify({...payload,password:teacherPass()});}
+  const res=await fetch(TEACHER_ENDPOINT,opts);const data=await res.json().catch(()=>({error:'خطأ في الاتصال'}));
+  if(!res.ok) throw new Error(data.error||'تعذر تنفيذ العملية'); return data;
+}
+async function teacherLogin(){
+  const p=document.getElementById('teacherPassword').value;const msg=document.getElementById('teacherLoginMsg');msg.style.display='block';msg.textContent='⏳ جارٍ التحقق...';
+  sessionStorage.setItem('itqanTeacherPass',p);
+  try{await teacherApi({action:'check'});msg.textContent='✅ تم الدخول.';renderTeacherState();await loadTeacherGalleryLists();await loadTeacherPrivateData();}
+  catch(e){sessionStorage.removeItem('itqanTeacherPass');msg.textContent='❌ '+e.message;}
+}
+function teacherLogout(){sessionStorage.removeItem('itqanTeacherPass');document.getElementById('teacherPassword').value='';renderTeacherState();}
+async function renderTeacherState(){
+  const login=document.getElementById('teacherLoginCard'),dash=document.getElementById('teacherDashboard');if(!login||!dash)return;
+  if(!teacherPass()){login.style.display='block';dash.style.display='none';return;}
+  try{await teacherApi({action:'check'});login.style.display='none';dash.style.display='block';}
+  catch(e){sessionStorage.removeItem('itqanTeacherPass');login.style.display='block';dash.style.display='none';}
+}
+function showTeacherTab(id){document.querySelectorAll('.teacher-panel').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active');}
+async function teacherUpload(type){
+  const isWork=type==='featured'; const status=document.getElementById(isWork?'workStatus':'recordStatus');status.style.display='block';
+  const name=document.getElementById(isWork?'workStudentName':'recordStudentName').value.trim();
+  const file=document.getElementById(isWork?'workFile':'recordFile').files[0];
+  const lesson=isWork?document.getElementById('workLessonTitle').value:'';
+  if(!name){status.textContent='🌷 اكتبي اسم الطالبة.';return;} if(isWork&&!lesson){status.textContent='🌷 اختاري الدرس.';return;} if(!file){status.textContent='🌷 اختاري الصورة.';return;}
+  status.textContent='⏳ جارٍ الرفع...'; const fd=new FormData();fd.set('action',isWork?'upload_featured':'upload_record');fd.set('student_name',name);if(isWork)fd.set('lesson_title',lesson);fd.set('file',file);
+  try{await teacherApi(fd,true);status.textContent='✅ تم الرفع بنجاح.';document.getElementById(isWork?'workStudentName':'recordStudentName').value='';document.getElementById(isWork?'workFile':'recordFile').value='';if(isWork)document.getElementById('workLessonTitle').value='';await loadTeacherGalleryLists();await loadPublicGallery();}
+  catch(e){status.textContent='❌ '+e.message;}
+}
+async function loadTeacherGalleryLists(){
+  if(!teacherPass())return; const [fw,ar]=await Promise.all([sb.from('featured_works').select('*').order('created_at',{ascending:false}),sb.from('achievement_records').select('*').order('created_at',{ascending:false})]);
+  const fl=document.getElementById('teacherFeaturedList'),rl=document.getElementById('teacherRecordsList');
+  if(fl) fl.innerHTML=fw.data?.length?fw.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> — ${esc(x.lesson_title)}<img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('featured',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد أعمال مضافة بعد.</div>';
+  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>{const p=parseRecordStudent(x.student_name);return `<div class="teacher-row"><b>${esc(p.name)}</b> <span class="student-badge">${esc(p.category)}</span><img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`}).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
+}
+async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='featured'?'delete_featured':'delete_record',id});await loadTeacherGalleryLists();await loadPublicGallery();}catch(e){alert(e.message);}}
+async function loadTeacherPrivateData(){
+  if(!teacherPass())return; const s=document.getElementById('teacherScoresList'),f=document.getElementById('teacherFamilyList'); if(s)s.innerHTML='<div class="loading">جارٍ التحميل...</div>';if(f)f.innerHTML='<div class="loading">جارٍ التحميل...</div>';
+  try{const d=await teacherApi({action:'list_teacher'});
+    if(s){const normalScores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_'));s.innerHTML=normalScores.length?normalScores.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> <span class="student-badge">${esc(x.class_name)}</span><div>${esc(x.lesson_title)} — <b>${x.score}/${x.total}</b></div><div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><button class="danger-btn" onclick="teacherDeletePrivate('score',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد درجات محفوظة بعد.</div>';}
+    if(f)f.innerHTML=d.family?.length?d.family.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b><div>${esc(x.lesson_title)}</div>${x.signed_url?`<img src="${x.signed_url}" alt="مشاركة الأسرة">`:''}<div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="promoteFamily(this,'${encodeURIComponent(x.student_name)}','${encodeURIComponent(x.lesson_title)}','${encodeURIComponent(x.signed_url||'')}')">⭐ اعرضي في المنصة</button><button class="danger-btn" onclick="teacherDeletePrivate('family',${x.id})">حذف</button></div></div>`).join(''):'<div class="muted">لا توجد مشاركات أسرة بعد.</div>';
+  }catch(e){if(s)s.innerHTML='<div class="muted">'+esc(e.message)+'</div>';if(f)f.innerHTML='<div class="muted">'+esc(e.message)+'</div>';}
+}
+async function promoteFamily(btn,nameEncoded,titleEncoded,urlEncoded){
+  const name=decodeURIComponent(nameEncoded), title=decodeURIComponent(titleEncoded), url=decodeURIComponent(urlEncoded);
+  if(!url){alert('تعذر فتح صورة المشاركة. حدّثي البيانات ثم حاولي مرة أخرى.');return;}
+  const oldText=btn.textContent;btn.disabled=true;btn.textContent='⏳ جارٍ العرض...';
+  try{
+    const resp=await fetch(url);if(!resp.ok)throw new Error('تعذر تحميل الصورة');
+    const blob=await resp.blob();
+    const ext=(blob.type&&blob.type.includes('/'))?blob.type.split('/')[1].replace('jpeg','jpg'):'jpg';
+    const file=new File([blob],`family-${Date.now()}.${ext}`,{type:blob.type||'image/jpeg'});
+    const fd=new FormData();fd.set('action','upload_featured');fd.set('student_name',name);fd.set('lesson_title','شراكة الأسرة • '+title);fd.set('file',file);
+    await teacherApi(fd,true);
+    btn.textContent='✅ معروضة في المنصة';
+    await loadPublicGallery();await loadTeacherGalleryLists();
+  }catch(e){btn.disabled=false;btn.textContent=oldText;alert('تعذر عرض المشاركة: '+e.message);}
+}
+async function teacherDeletePrivate(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='score'?'delete_score':'delete_family',id});await loadTeacherPrivateData();}catch(e){alert(e.message);}}
+
+let visitorMode=false;
+const VISITOR_PASSWORD='000';
+
+function visitorAuthorized(){
+  return sessionStorage.getItem('itqanVisitorAuth')==='1';
+}
+function openVisitorMode(){
+  visitorMode=visitorAuthorized();
+  showSection('manager');
+  renderVisitorState();
+}
+function renderVisitorState(){
+  const login=document.getElementById('visitorLoginCard');
+  const dash=document.getElementById('visitorDashboard');
+  if(!login||!dash)return;
+  const ok=visitorAuthorized();
+  visitorMode=ok;
+  login.style.display=ok?'none':'block';
+  dash.style.display=ok?'block':'none';
+}
+function visitorLogin(){
+  const input=document.getElementById('visitorPassword');
+  const msg=document.getElementById('visitorLoginMsg');
+  const pass=(input?.value||'').trim();
+  if(msg)msg.style.display='block';
+  if(pass===VISITOR_PASSWORD){
+    sessionStorage.setItem('itqanVisitorAuth','1');
+    visitorMode=true;
+    if(msg)msg.textContent='✅ تم الدخول بنجاح.';
+    renderVisitorState();
+  }else{
+    visitorMode=false;
+    sessionStorage.removeItem('itqanVisitorAuth');
+    if(msg)msg.textContent='❌ الرقم السري غير صحيح.';
+  }
+}
+function visitorLogout(){
+  visitorMode=false;
+  sessionStorage.removeItem('itqanVisitorAuth');
+  const input=document.getElementById('visitorPassword');
+  if(input)input.value='';
+  showSection('home');
+}
+function enterStudentMode(){
+  visitorMode=false;
+  sessionStorage.removeItem('itqanVisitorAuth');
+  showSection('student');
+}
+function showVisitorStar(){
+  if(!visitorAuthorized()){ openVisitorMode(); return; }
+  visitorMode=true;
+  showSection('star');
+}
+
+function showSection(id){
+  // منع الوصول لسجلات الإنجاز دون صلاحية زائر/معلمة
+  if((id==='directorRecord'||id==='myRecord') && !(visitorMode || !!teacherPass())) id='home';
+
+  document.querySelectorAll('main > section').forEach(s=>s.style.display='none');
+  const target=document.getElementById(id);
+  if(target){
+    target.style.display='block';
+    if(id==='manager')renderVisitorState();
+    if(id==='star')renderStarStatus();
+    if(id==='gallery')loadPublicGallery();
+    if(id==='teacher')renderTeacherState();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+const lessonAnswers = {};
+function gradeLessonQ(btn,lesson,q,isCorrect){
+  lessonAnswers[lesson]=lessonAnswers[lesson]||{1:null,2:null};
+  const card=btn.closest('.card');
+  const questionButtons=Array.from(card.querySelectorAll(`button[onclick*="gradeLessonQ(this,'${lesson}',${q},"]`));
+  questionButtons.forEach(b=>b.classList.remove('correct','wrong'));
+  btn.classList.add(isCorrect?'correct':'wrong');
+  lessonAnswers[lesson][q]=isCorrect;
+  const msg=document.getElementById(`${lesson}-q${q}msg`);
+  msg.style.display='block';
+  msg.textContent=isCorrect?'✅ أحسنتِ! إجابة صحيحة.':'❌ حاولي مرة أخرى.';
+}
+function showLessonScore(lesson){
+  const ans=lessonAnswers[lesson]||{1:null,2:null};
+  const box=document.getElementById(`${lesson}-scoreBox`); box.style.display='block';
+  if(ans[1]===null||ans[2]===null){box.textContent='🌷 أجيبي عن السؤالين أولًا ثم اعرضي الدرجة.';return;}
+  const score=(ans[1]?1:0)+(ans[2]?1:0);
+  box.textContent=score===2?'🌟 درجتك 2 من 2 — ممتازة يا فنانة!':`درجتك ${score} من 2 — حاولي مرة أخرى لتحصلي على الدرجة كاملة.`;
+  saveLessonScore(lesson,score,2);
+}
+function previewFamily(input,lesson){
+  const img=document.getElementById('familyPreview-'+lesson);
+  if(input.files && input.files[0]){
+    img.src=URL.createObjectURL(input.files[0]); img.style.display='block';
+  }
+}
+async function submitFamily(lesson,title){
+  const nameEl=document.getElementById('familyName-'+lesson);
+  const fileEl=document.getElementById('familyFile-'+lesson);
+  const status=document.getElementById('familyStatus-'+lesson);
+  const name=(nameEl?.value||'').trim().replace(/\s+/g,' ');
+  const file=fileEl?.files?.[0];
+  status.style.display='block';
+  if(!name){status.textContent='🌷 اكتبي اسم الطالبة.';return;}
+  if(!file){status.textContent='🌷 اختاري صورة المشاركة.';return;}
+  if(file.size>5*1024*1024){status.textContent='🌷 حجم الصورة كبير. اختاري صورة أقل من 5 ميجابايت.';return;}
+  status.textContent='⏳ جارٍ إرسال المشاركة...';
+  try{
+    const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-zA-Z0-9]/g,'').toLowerCase()||'jpg';
+    const path=`${lesson}/${Date.now()}-${Math.random().toString(36).slice(2,10)}.${ext}`;
+    const up=await sb.storage.from('family-submissions').upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type||undefined});
+    if(up.error) throw up.error;
+    const ins=await sb.from('family_submissions').insert({student_name:name,lesson_id:lesson,lesson_title:title,image_path:path});
+    if(ins.error) throw ins.error;
+    status.textContent='✅ تم إرسال مشاركة الأسرة بنجاح.';
+    nameEl.value=''; fileEl.value='';
+    const img=document.getElementById('familyPreview-'+lesson); if(img) img.style.display='none';
+  }catch(err){
+    console.error(err); status.textContent='تعذر الإرسال الآن. حاولي مرة أخرى.';
+  }
+}
+
+function saveLessonScore(lesson,score,total){
+  let student=null; try{student=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  if(!student || !student.name || !student.className) return;
+  let all={}; try{all=JSON.parse(localStorage.getItem('itqanScores')||'{}')}catch(e){}
+  const key=student.className+'|'+student.name;
+  all[key]=all[key]||{};
+  all[key][lesson]={score:score,total:total,date:new Date().toLocaleDateString('ar-SA')};
+  localStorage.setItem('itqanScores',JSON.stringify(all));
+  sb.from('student_scores').insert({
+    student_name:student.name,
+    class_name:student.className,
+    lesson_id:lesson,
+    lesson_title:lessonTitles[lesson]||lesson,
+    score:score,
+    total:total
+  }).then(({error})=>{if(error) console.error('score save error',error)});
+}
+function getCurrentStudentRecord(){
+  let student=null,all={};
+  try{student=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  try{all=JSON.parse(localStorage.getItem('itqanScores')||'{}')}catch(e){}
+  if(!student || !student.name || !student.className) return {student:null,record:{}};
+  const key=student.className+'|'+student.name;
+  return {student:student,record:all[key]||{}};
+}
+function renderAchievementRecord(){
+  const el=document.getElementById('achievementRecord'); if(!el)return;
+  const data=getCurrentStudentRecord();
+  if(!data.student){el.innerHTML='<p class="muted">تضيف المعلمة صور سجلات الإنجاز هنا لتكون ظاهرة للمديرة.</p>';return;}
+  const sk=data.record.sketch;
+  const scoreText=sk ? `${sk.score} / ${sk.total}` : 'لم يُنجز بعد';
+  const badge=sk && sk.score===sk.total ? ' ⭐' : '';
+  el.innerHTML=`<div class="record-row"><span class="record-label">اسم الطالبة</span><span>${data.student.name}</span></div><div class="record-row"><span class="record-label">الفصل</span><span>${data.student.className}</span></div><div class="record-row"><span class="record-label">اختبار درس الاسكتش</span><span class="score-pill ${sk&&sk.score===sk.total?'perfect':''}">${scoreText}${badge}</span></div>`;
+}
+async function renderStarStatus(){
+  const el=document.getElementById('starStatus'); if(!el)return;
+  const data=getCurrentStudentRecord();
+  if(!data.student){
+    if(teacherPass()){
+      el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
+      try{
+        const d=await teacherApi({action:'list_teacher'});
+        const scores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_'));
+        const winners={};
+        for(const x of scores){
+          if(Number(x.total)>0 && Number(x.score)===Number(x.total)){
+            const key=(x.class_name||'')+'|'+(x.student_name||'');
+            winners[key]=winners[key]||{name:x.student_name,className:x.class_name,count:0};
+            winners[key].count++;
+          }
+        }
+        const rows=Object.values(winners);
+        el.innerHTML=rows.length
+          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span><div>⭐ ${x.count} نجمة إتقان</div></div>`).join('')
+          : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد طالبة حصلت على الدرجة الكاملة حتى الآن.</p></div>';
+      }catch(e){
+        el.innerHTML='<p class="muted">تعذر تحميل بيانات نجمة إتقان الآن.</p>';
+      }
+    }else if(visitorMode){
+      el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
+      try{
+        const {data:scores,error}=await sb.from('student_scores').select('student_name,class_name,lesson_id,score,total');
+        if(error)throw error;
+        const winners={};
+        for(const x of (scores||[])){
+          if(String(x.lesson_id||'').startsWith('achievement_eval_'))continue;
+          if(Number(x.total)>0 && Number(x.score)===Number(x.total)){
+            const key=(x.class_name||'')+'|'+(x.student_name||'');
+            winners[key]={name:x.student_name,className:x.class_name};
+          }
+        }
+        const rows=Object.values(winners).sort((a,b)=>String(a.className||'').localeCompare(String(b.className||''),'ar')||String(a.name||'').localeCompare(String(b.name||''),'ar'));
+        el.innerHTML=rows.length
+          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3><p class="muted" style="text-align:center">تظهر للزوار أسماء الطالبات الحاصلات على نجمة إتقان دون عرض الدرجات التفصيلية.</p>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span></div>`).join('')
+          : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد طالبة حصلت على نجمة إتقان حتى الآن.</p></div>';
+      }catch(e){
+        el.innerHTML='<p class="muted">تعذر تحميل أسماء طالبات نجمة إتقان الآن.</p>';
+      }
+    }else{
+      el.innerHTML='<p>سجلي الدخول أولًا لعرض حالة نجمة إتقان.</p>';
+    }
+    return;
+  }
+  const perfect=Object.values(data.record).filter(x=>x && x.score===x.total).length;
+  if(perfect>0){el.innerHTML=`<div style="text-align:center;font-size:60px">⭐</div><h3 style="text-align:center">${data.student.name}</h3><p style="text-align:center">حصلتِ على ${perfect} نجمة إتقان حتى الآن.</p>`;}
+  else{el.innerHTML=`<p style="text-align:center">${data.student.name}، احصلي على الدرجة الكاملة في أحد الاختبارات لتحصلي على ⭐ نجمة إتقان.</p>`;}
+}
+
+
+
+/* ===== Achievement record evaluation ===== */
+const achievementEvalCriteria = [
+  'تنظيم السجل وترتيبه',
+  'جمال الغلاف ونظافته',
+  'وضوح الفواصل بين الأقسام',
+  'اكتمال السيرة الذاتية',
+  'اكتمال أوراق العمل',
+  'اكتمال المهمات الأدائية',
+  'اكتمال الاختبارات',
+  'إرفاق نماذج من أعمال الطالبة',
+  'جودة التنسيق والترتيب العام',
+  'الالتزام بتعليمات السجل'
+];
+const achievementEvalLabels={4:'ممتاز',3:'جيد جداً',2:'جيد',1:'يحتاج إلى تحسين'};
+let achievementEvalValues={};
+function achievementOverall(total){if(total>=18)return 'ممتاز';if(total>=15)return 'جيد جداً';if(total>=10)return 'جيد';return 'يحتاج إلى تحسين';}
+function renderAchievementEvaluationForm(){
+  const box=document.getElementById('recordEvalCriteria');if(!box)return;
+  box.innerHTML=achievementEvalCriteria.map((c,i)=>`<div class="eval-row"><div class="eval-criterion">${i+1}. ${esc(c)}</div>${[4,3,2,1].map(v=>`<button type="button" class="eval-choice" data-criterion="${i+1}" data-value="${v}" onclick="selectAchievementEval(${i+1},${v},this)">${achievementEvalLabels[v]}</button>`).join('')}</div>`).join('');
+  achievementEvalValues={};updateAchievementEvalSummary();
+}
+function selectAchievementEval(index,value,btn){
+  achievementEvalValues[index]=value;
+  const row=btn.closest('.eval-row');row?.querySelectorAll('.eval-choice').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');updateAchievementEvalSummary();
+}
+function updateAchievementEvalSummary(){
+  const rawTotal=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b||0),0);
+  const total20=rawTotal/2;
+  const count=Object.keys(achievementEvalValues).length;
+  const t=document.getElementById('recordEvalTotal'),o=document.getElementById('recordEvalOverall');
+  if(t)t.textContent=`${total20} / 20`;if(o)o.textContent=count===10?achievementOverall(total20):'—';
+}
+function populateEvalStudents(){
+  const cls=document.getElementById('evalClass')?.value||'';const sel=document.getElementById('evalStudent');if(!sel)return;
+  sel.innerHTML='<option value="">اختاري الطالبة</option>';
+  (studentNamesByClass[cls]||[]).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+  renderAchievementEvaluationForm();
+  const st=document.getElementById('recordEvalStatus');if(st)st.textContent='';
+}
+async function fetchLatestAchievementEvaluation(name,className){
+  let q=sb.from('student_scores').select('*').eq('student_name',name).like('lesson_id','achievement_eval_%').order('created_at',{ascending:false});
+  if(className)q=q.eq('class_name',className);
+  const {data,error}=await q;if(error)throw error;
+  const latest={};for(const r of (data||[])){const m=String(r.lesson_id||'').match(/^achievement_eval_(\d+)$/);if(m&&!latest[m[1]])latest[m[1]]=r;}
+  return latest;
+}
+async function loadExistingEvaluationForTeacher(){
+  const cls=document.getElementById('evalClass')?.value||'',name=document.getElementById('evalStudent')?.value||'';renderAchievementEvaluationForm();if(!cls||!name)return;
+  const st=document.getElementById('recordEvalStatus');if(st)st.textContent='⏳ جارٍ تحميل التقييم السابق...';
+  try{const latest=await fetchLatestAchievementEvaluation(name,cls);achievementEvalValues={};
+    for(let i=1;i<=10;i++){const r=latest[i];if(r){achievementEvalValues[i]=Number(r.score);const btn=document.querySelector(`#recordEvalCriteria .eval-choice[data-criterion="${i}"][data-value="${Number(r.score)}"]`);btn?.classList.add('selected');}}
+    updateAchievementEvalSummary();if(st)st.textContent=Object.keys(latest).length?'✅ تم تحميل آخر تقييم محفوظ.':'لا يوجد تقييم سابق لهذه الطالبة.';
+  }catch(e){if(st)st.textContent='تعذر تحميل التقييم السابق.';console.error(e)}
+}
+async function saveAchievementEvaluation(){
+  const cls=document.getElementById('evalClass')?.value||'',name=document.getElementById('evalStudent')?.value||'',st=document.getElementById('recordEvalStatus'),btn=document.getElementById('recordEvalSaveBtn');
+  if(!cls||!name){if(st)st.textContent='🌷 اختاري الفصل والطالبة أولًا.';return;}
+  if(Object.keys(achievementEvalValues).length!==10){if(st)st.textContent='🌷 قيّمي المعايير العشرة كلها قبل الحفظ.';return;}
+  const rows=achievementEvalCriteria.map((title,i)=>({student_name:name,class_name:cls,lesson_id:`achievement_eval_${i+1}`,lesson_title:`تقييم سجل الإنجاز • ${title}`,score:Number(achievementEvalValues[i+1]),total:4}));
+  if(btn)btn.disabled=true;if(st)st.textContent='⏳ جارٍ حفظ التقييم...';
+  try{const {error}=await sb.from('student_scores').insert(rows);if(error)throw error;const rawTotal=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b),0);const total20=rawTotal/2;if(st)st.textContent=`✅ تم حفظ التقييم: ${total20}/20 — ${achievementOverall(total20)}`;}
+  catch(e){console.error(e);if(st)st.textContent='❌ تعذر حفظ التقييم الآن.';}finally{if(btn)btn.disabled=false;}
+}
+async function loadAchievementEvaluationView(name,className,targetId){
+  const el=document.getElementById(targetId);if(!el)return;el.innerHTML='<div class="loading">جارٍ تحميل التقييم...</div>';
+  try{const latest=await fetchLatestAchievementEvaluation(name,className);const keys=Object.keys(latest);if(!keys.length){el.innerHTML='<div class="muted">لم يتم إضافة تقييم للسجل بعد.</div>';return;}
+    let total=0,count=0,rows='';for(let i=1;i<=10;i++){const r=latest[i];if(!r)continue;const v=Number(r.score||0);total+=v;count++;rows+=`<div class="eval-view-row"><span>${i}. ${esc(achievementEvalCriteria[i-1])}</span><span class="eval-view-badge">${achievementEvalLabels[v]||v}</span></div>`;}
+    const total20=total/2;
+    const normalized20=count?((total/(count*4))*20):0;
+    const overall=achievementOverall(count===10?total20:normalized20);
+    el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${count===10?total20+'/20':total20+'/'+(count*2)}</span><span>${esc(overall)}</span></div>`;
+  }catch(e){console.error(e);el.innerHTML='<div class="muted">تعذر تحميل تقييم السجل الآن.</div>';}
+}
+
+const studentNamesByClass = {
+  'ثالث/١': [
+    'أبرار عبدالله حامد الزهراني','أبرار عزيز شريعه الله مياه','أميرة محمد احمد الغامدي','ابتسام سعود أمير حسين',
+    'اسراء محمود الله صادق أحمد','ايلاف عبدالله رزيق الربيعي','جوليا عادل حسن حكمي','حال مطر بن ابراهيم الزهراني',
+    'حور احمد درويش حافظ','دانة ابراهيم ادريس حسن','رند ناصر حامد الصاعدي','رهف محسن محمد عبدالله بصير',
+    'روين عبدالفتاح ابراهيم الزهراني','ريتاج نور الأسلام حسن علي آن مين','ريتال عبدربه احمد العميري','ساره طالل منصور الاسمري',
+    'سلوى احمد نجم الوارث بتى وارث','سوزان سليم الله حبيب الله','صفاء عثمان حافظ عثمان','غرام عوض سعيد الزبيدي',
+    'غصون ابراهيم عطيه الزهراني','غال علي مرضي القرني','غنى علي بن مهدي حدادي','فرح احمد عبدالله المنتشري',
+    'النا محمد مقعد البقمي','لمار علاء قاسم أمين','لنا فيصل بن عجب القحطاني','لورين خالد صديق صديق',
+    'لولوه ايمن بكري الصبحى','لينا انور صالح الزبيدي','لينة عبدالله علي الزبيدي','ملك نواف احمد المالكي',
+    'همس ابراهيم عبدالله الخثعمي','ود محمد عبدالله العرياني','ورد سلطان محمد الشهري','ورد عبدالله ابراهيم سنيقالى',
+    'وريف تركي نافع الناشري'
+  ],
+  'ثالث/٣': [
+    'أماني عبده محمد الصحبي','أميره مختار سعيد العتيبي','المار عبدالرحمن حسن الصعب','الهام ناجي مساعد الهبيلي',
+    'بشاير اكرم صالح المعشي','ترف بنت بدر بن عبيد الدعدى','تيانا حسن احمد الشيخي','جنى عبدالرحمن مطيع الرحمن نور',
+    'جوان عبدالله عوض الكعبي','حنين سعد محمد الاسمري','حور علي محمد ناصري','حور نائف محمد الشمراني',
+    'دالين سلطان هيازع البارقي','ديالا سعد فرج عرجاش','دينا سعد هاشم الحربي','رالين معدي بن حمود الدربي',
+    'رحمه ادريس جليل حسين','رولين محمد اسماعيل غروي','ريام حمد محمد يوسف','ريتال حسن ابن محمد جيلان',
+    'ريف علي حمدان الشهري','سلمى عمر ناشي العتيبي','شموخ علي حسن عسيري','ضي ضيف الله احمد الزهراني',
+    'عائشة علي ناصر العزاني','علياء احمد بن علي الزهراني','غال عبدالله علي القرني','غلباء أحمد منصور ال سبر',
+    'فرح سامي سعيد الغامدي','قمر صالح سعيد الزهراني','كيان حسان دخيل الله الصاعدي','الرين حسن سودان الزهراني',
+    'لتين سعد بن حسن العمري','ملك سعد ابن مطير المالكي','ملك معاذ سالم الزهراني','ميال خضر عبدالله الزهراني',
+    'مينار محمد علي حكمي','ندى فارس علي الزهراني','نوره عبدالله صالح الغامدي','هناي سعد بن نويعم السلمي',
+    'ود علي احمد القرني','وهبه صالح حسن علي الدباسي'
+  ]
+};
+
+function populateStudentNames(){
+  const className=document.getElementById('studentClass').value;
+  const nameSelect=document.getElementById('studentName');
+  if(!nameSelect)return;
+  const current=nameSelect.value;
+  nameSelect.innerHTML='<option value="">اختاري اسم الطالبة</option>';
+  (studentNamesByClass[className]||[]).forEach(name=>{
+    const o=document.createElement('option');o.value=name;o.textContent=name;nameSelect.appendChild(o);
+  });
+  if((studentNamesByClass[className]||[]).includes(current)) nameSelect.value=current;
+}
+
+function normalizeArabicName(name){
+  return name.trim().replace(/\s+/g,' ');
+}
+function studentLogin(){
+  visitorMode=false;
+  const className=document.getElementById('studentClass').value;
+  const name=normalizeArabicName(document.getElementById('studentName').value);
+  const msg=document.getElementById('loginMsg');
+  msg.style.display='block';
+  if(!className){msg.textContent='🌷 اختاري الفصل أولًا.';return;}
+  if(!name){msg.textContent='🌷 اختاري اسم الطالبة.';return;}
+  localStorage.setItem('itqanStudent',JSON.stringify({name:name,className:className}));
+  msg.textContent='✅ تم تسجيل الدخول بنجاح.';
+  renderStudentLogin();
+}
+function renderStudentLogin(){
+  let data=null;
+  try{data=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  const loginCard=document.getElementById('loginCard');
+  const welcome=document.getElementById('studentWelcome');
+  if(data && data.name && data.className){
+    loginCard.style.display='none';
+    welcome.style.display='block';
+    document.getElementById('welcomeName').textContent='أهلًا بكِ يا '+data.name+' 🎨';
+    document.getElementById('welcomeClass').textContent=data.className;
+  }else{
+    loginCard.style.display='block';
+    welcome.style.display='none';
+  }
+}
+function studentLogout(){
+  localStorage.removeItem('itqanStudent');
+  document.getElementById('studentClass').value='';
+  populateStudentNames();
+  document.getElementById('loginMsg').style.display='none';
+  renderStudentLogin();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{visitorMode=visitorAuthorized();showSection('home');renderStudentLogin();loadPublicGallery();renderAchievementEvaluationForm();});
+</script></body></html>
