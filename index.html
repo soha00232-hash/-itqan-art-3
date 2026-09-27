@@ -237,6 +237,7 @@ summary::-webkit-details-marker{display:none}
 <button class="teacher-tab" onclick="showTeacherTab('uploadWork')">🌟 عمل متميز</button>
 <button class="teacher-tab" onclick="showTeacherTab('uploadRecord')">📘 سجل إنجاز</button>
 <button class="teacher-tab" onclick="showTeacherTab('recordEvaluation')">✅ تقييم السجل</button>
+<button class="teacher-tab" onclick="showTeacherTab('taskPoints')">🎯 نقاط المهمات</button>
 <button class="teacher-tab" onclick="showTeacherTab('scores')">📊 الدرجات</button>
 <button class="teacher-tab" onclick="showTeacherTab('family')">🤝 مشاركات الأسرة</button>
 </div>
@@ -272,11 +273,33 @@ summary::-webkit-details-marker{display:none}
   </div>
   <div id="recordEvalStatus" class="eval-status"></div>
 </div>
+<div id="taskPoints" class="card teacher-panel">
+  <h2>🎯 اعتماد إنجاز المهمة</h2>
+  <p class="muted">كل مهمة مكتملة = 3 نقاط. اختاري الطالبة والدرس ثم اعتمدي المهمة. لا تتكرر النقاط لنفس المهمة.</p>
+  <div class="eval-toolbar">
+    <select id="taskClass" onchange="populateTaskStudents()"><option value="">اختاري الفصل</option><option value="ثالث/١">ثالث/١</option><option value="ثالث/٣">ثالث/٣</option></select>
+    <select id="taskStudent"><option value="">اختاري الطالبة</option></select>
+  </div>
+  <div class="teacher-upload">
+    <select id="taskLesson">
+      <option value="">اختاري الدرس</option>
+      <option value="sketch">الاسكتش</option>
+      <option value="folk">الزخارف الشعبية السعودية</option>
+      <option value="textures">تكوينات وملامس مطبوعة</option>
+      <option value="geometry">أطبع بوحداتي الهندسية</option>
+      <option value="surfaceprints">طباعة وحدات ذات ملامس مختلفة</option>
+      <option value="weaving">النسيج البسيط الملون</option>
+    </select>
+    <button class="login-submit" type="button" onclick="awardTaskPoints()">اعتماد المهمة +3 نقاط ⭐</button>
+    <div id="taskPointsStatus" class="login-msg"></div>
+  </div>
+  <div class="private-note" style="margin-top:12px">نظام إتقان: الاختبارات 12 نقطة + المهمات 18 نقطة = 30 نقطة.</div>
+</div>
 <div id="scores" class="card teacher-panel"><h2>📊 درجات الطالبات</h2><p class="muted">هذه البيانات تظهر لكِ فقط داخل لوحة المعلمة.</p><div id="teacherScoresList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
 <div id="family" class="card teacher-panel"><h2>🤝 مشاركات الأسرة</h2><p class="muted">الصور المرسلة من قسم شراكة الأسرة داخل الدروس.</p><div id="teacherFamilyList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
 </div>
 </section>
-<section id="star" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>⭐ نجمة إتقان</h2><div id="starStatus"><p>أكملي الاختبارات لتحصلي على نجمة إتقان.</p></div></div></section>
+<section id="star" class="section"><button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button><div class="card"><h2>⭐ نجمة إتقان</h2><div class="private-note" style="margin-bottom:12px">رصيد إتقان من 30 نقطة: الاختبارات 12 نقطة، والمهمات 18 نقطة.</div><div id="starStatus"><p>أكملي الاختبارات والمهمات لزيادة رصيدك في إتقان.</p></div></div></section>
 
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -285,6 +308,34 @@ const SUPABASE_URL = 'https://qkegutmfdbtlunbvrzgt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_od0E1kpfsZtSCh9Hkj8hLA_ihCiU7xN';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const lessonTitles = {sketch:'الاسكتش',folk:'الزخارف الشعبية السعودية',textures:'تكوينات وملامس مطبوعة',geometry:'أطبع بوحداتي الهندسية',surfaceprints:'طباعة وحدات ذات ملامس مختلفة',weaving:'النسيج البسيط الملون'};
+const MAX_QUIZ_POINTS=12, MAX_TASK_POINTS=18, MAX_ITQAN_POINTS=30;
+function summarizeItqanPoints(scores){
+  const quizBest={}, taskDone={};
+  for(const x of (scores||[])){
+    const id=String(x.lesson_id||'');
+    if(id.startsWith('achievement_eval_')) continue;
+    if(id.startsWith('task_')){
+      const lesson=id.slice(5);
+      if(lessonTitles[lesson] && Number(x.score)>0) taskDone[lesson]=Math.max(taskDone[lesson]||0, Math.min(3,Number(x.score)||0));
+    }else if(lessonTitles[id]){
+      quizBest[id]=Math.max(quizBest[id]||0, Math.min(2,Number(x.score)||0));
+    }
+  }
+  const quiz=Object.values(quizBest).reduce((a,b)=>a+b,0);
+  const tasks=Object.values(taskDone).reduce((a,b)=>a+b,0);
+  return {quiz,tasks,total:Math.min(MAX_ITQAN_POINTS,quiz+tasks),completedTasks:Object.keys(taskDone).length};
+}
+function groupStudentPoints(scores){
+  const groups={};
+  for(const x of (scores||[])){
+    if(String(x.lesson_id||'').startsWith('achievement_eval_'))continue;
+    const key=(x.class_name||'')+'|'+(x.student_name||'');
+    groups[key]=groups[key]||{name:x.student_name,className:x.class_name,scores:[]};
+    groups[key].scores.push(x);
+  }
+  return Object.values(groups).map(g=>({...g,...summarizeItqanPoints(g.scores)}));
+}
+
 const TEACHER_ENDPOINT = SUPABASE_URL + '/functions/v1/itqan-teacher';
 function esc(v){return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
 function publicImageUrl(path){return sb.storage.from('teacher-gallery').getPublicUrl(path).data.publicUrl;}
@@ -409,6 +460,32 @@ async function renderTeacherState(){
   try{await teacherApi({action:'check'});login.style.display='none';dash.style.display='block';}
   catch(e){sessionStorage.removeItem('itqanTeacherPass');login.style.display='block';dash.style.display='none';}
 }
+function populateTaskStudents(){
+  const cls=document.getElementById('taskClass')?.value||'';
+  const sel=document.getElementById('taskStudent'); if(!sel)return;
+  sel.innerHTML='<option value="">اختاري الطالبة</option>';
+  (studentNamesByClass[cls]||[]).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o)});
+  const st=document.getElementById('taskPointsStatus');if(st){st.style.display='none';st.textContent='';}
+}
+async function awardTaskPoints(){
+  const cls=document.getElementById('taskClass')?.value||'';
+  const name=document.getElementById('taskStudent')?.value||'';
+  const lesson=document.getElementById('taskLesson')?.value||'';
+  const st=document.getElementById('taskPointsStatus'); if(st)st.style.display='block';
+  if(!cls||!name||!lesson){if(st)st.textContent='🌷 اختاري الفصل والطالبة والدرس أولًا.';return;}
+  if(st)st.textContent='⏳ جارٍ اعتماد المهمة...';
+  try{
+    const taskId='task_'+lesson;
+    const {data:existing,error:findErr}=await sb.from('student_scores').select('id,score,total').eq('student_name',name).eq('class_name',cls).eq('lesson_id',taskId).limit(1);
+    if(findErr)throw findErr;
+    if(existing&&existing.length){if(st)st.textContent='✅ المهمة معتمدة مسبقًا، ولن تتكرر الـ 3 نقاط.';return;}
+    const {error}=await sb.from('student_scores').insert({student_name:name,class_name:cls,lesson_id:taskId,lesson_title:'إنجاز مهمة • '+(lessonTitles[lesson]||lesson),score:3,total:3});
+    if(error)throw error;
+    if(st)st.textContent='⭐ تم اعتماد المهمة وإضافة 3 نقاط للطالبة.';
+    await loadTeacherPrivateData();
+  }catch(e){console.error(e);if(st)st.textContent='❌ تعذر اعتماد المهمة الآن.';}
+}
+
 function showTeacherTab(id){document.querySelectorAll('.teacher-panel').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active');}
 async function teacherUpload(type){
   const isWork=type==='featured'; const status=document.getElementById(isWork?'workStatus':'recordStatus');status.style.display='block';
@@ -651,55 +728,41 @@ function renderAchievementRecord(){
 async function renderStarStatus(){
   const el=document.getElementById('starStatus'); if(!el)return;
   const data=getCurrentStudentRecord();
-  if(!data.student){
-    if(teacherPass()){
-      el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
-      try{
-        const d=await teacherApi({action:'list_teacher'});
-        const scores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_'));
-        const winners={};
-        for(const x of scores){
-          if(Number(x.total)>0 && Number(x.score)===Number(x.total)){
-            const key=(x.class_name||'')+'|'+(x.student_name||'');
-            winners[key]=winners[key]||{name:x.student_name,className:x.class_name,count:0};
-            winners[key].count++;
-          }
-        }
-        const rows=Object.values(winners);
-        el.innerHTML=rows.length
-          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span><div>⭐ ${x.count} نجمة إتقان</div></div>`).join('')
-          : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد طالبة حصلت على الدرجة الكاملة حتى الآن.</p></div>';
-      }catch(e){
-        el.innerHTML='<p class="muted">تعذر تحميل بيانات نجمة إتقان الآن.</p>';
-      }
-    }else if(visitorMode){
-      el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
-      try{
-        const {data:scores,error}=await sb.from('student_scores').select('student_name,class_name,lesson_id,score,total');
-        if(error)throw error;
-        const winners={};
-        for(const x of (scores||[])){
-          if(String(x.lesson_id||'').startsWith('achievement_eval_'))continue;
-          if(Number(x.total)>0 && Number(x.score)===Number(x.total)){
-            const key=(x.class_name||'')+'|'+(x.student_name||'');
-            winners[key]={name:x.student_name,className:x.class_name};
-          }
-        }
-        const rows=Object.values(winners).sort((a,b)=>String(a.className||'').localeCompare(String(b.className||''),'ar')||String(a.name||'').localeCompare(String(b.name||''),'ar'));
-        el.innerHTML=rows.length
-          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3><p class="muted" style="text-align:center">تظهر للزوار أسماء الطالبات الحاصلات على نجمة إتقان دون عرض الدرجات التفصيلية.</p>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span></div>`).join('')
-          : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد طالبة حصلت على نجمة إتقان حتى الآن.</p></div>';
-      }catch(e){
-        el.innerHTML='<p class="muted">تعذر تحميل أسماء طالبات نجمة إتقان الآن.</p>';
-      }
-    }else{
-      el.innerHTML='<p>سجلي الدخول أولًا لعرض حالة نجمة إتقان.</p>';
-    }
+  if(teacherPass()){
+    el.innerHTML='<div class="loading">جارٍ تحميل رصيد إتقان...</div>';
+    try{
+      const d=await teacherApi({action:'list_teacher'});
+      const rows=groupStudentPoints(d.scores||[]).filter(x=>x.total>0).sort((a,b)=>b.total-a.total||String(a.className||'').localeCompare(String(b.className||''),'ar')||String(a.name||'').localeCompare(String(b.name||''),'ar'));
+      el.innerHTML=rows.length
+        ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">رصيد طالبات إتقان</h3>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span><div><b>${x.total} / 30 نقطة</b></div><div class="muted">الاختبارات: ${x.quiz}/12 • المهمات: ${x.tasks}/18</div></div>`).join('')
+        : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>رصيد إتقان</h3><p class="muted">لا توجد نقاط محفوظة حتى الآن.</p></div>';
+    }catch(e){el.innerHTML='<p class="muted">تعذر تحميل رصيد إتقان الآن.</p>';}
     return;
   }
-  const perfect=Object.values(data.record).filter(x=>x && x.score===x.total).length;
-  if(perfect>0){el.innerHTML=`<div style="text-align:center;font-size:60px">⭐</div><h3 style="text-align:center">${data.student.name}</h3><p style="text-align:center">حصلتِ على ${perfect} نجمة إتقان حتى الآن.</p>`;}
-  else{el.innerHTML=`<p style="text-align:center">${data.student.name}، احصلي على الدرجة الكاملة في أحد الاختبارات لتحصلي على ⭐ نجمة إتقان.</p>`;}
+  if(visitorMode){
+    el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
+    try{
+      const {data:scores,error}=await sb.from('student_scores').select('student_name,class_name,lesson_id,score,total');
+      if(error)throw error;
+      const rows=groupStudentPoints(scores||[]).filter(x=>x.total>0).sort((a,b)=>String(a.className||'').localeCompare(String(b.className||''),'ar')||String(a.name||'').localeCompare(String(b.name||''),'ar'));
+      el.innerHTML=rows.length
+        ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3><p class="muted" style="text-align:center">تظهر للزوار أسماء الطالبات المشاركات دون عرض الدرجات التفصيلية.</p>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span></div>`).join('')
+        : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد نقاط محفوظة حتى الآن.</p></div>';
+    }catch(e){el.innerHTML='<p class="muted">تعذر تحميل أسماء طالبات نجمة إتقان الآن.</p>';}
+    return;
+  }
+  if(!data.student){el.innerHTML='<p>سجلي الدخول أولًا لعرض رصيدك في إتقان.</p>';return;}
+  el.innerHTML='<div class="loading">جارٍ تحميل رصيدك...</div>';
+  try{
+    const {data:scores,error}=await sb.from('student_scores').select('student_name,class_name,lesson_id,score,total').eq('student_name',data.student.name).eq('class_name',data.student.className);
+    if(error)throw error;
+    const p=summarizeItqanPoints(scores||[]);
+    el.innerHTML=`<div style="text-align:center;font-size:60px">⭐</div><h3 style="text-align:center">${esc(data.student.name)}</h3><div class="eval-summary" style="justify-content:center;text-align:center"><div><div class="muted">الاختبارات</div><div class="eval-total">${p.quiz} / 12</div></div><div><div class="muted">المهمات</div><div class="eval-total">${p.tasks} / 18</div></div><div><div class="muted">رصيد إتقان</div><div class="eval-total">${p.total} / 30</div></div></div><p style="text-align:center" class="muted">كل اختبار من نقطتين، وكل مهمة معتمدة من المعلمة بثلاث نقاط.</p>`;
+  }catch(e){
+    const localScores=Object.entries(data.record||{}).map(([lesson,v])=>({lesson_id:lesson,score:v?.score||0,total:v?.total||2}));
+    const p=summarizeItqanPoints(localScores);
+    el.innerHTML=`<div style="text-align:center;font-size:60px">⭐</div><h3 style="text-align:center">${esc(data.student.name)}</h3><p style="text-align:center">رصيدك الحالي من الاختبارات: <b>${p.quiz} / 12</b></p><p class="muted" style="text-align:center">تعذر تحميل نقاط المهمات الآن.</p>`;
+  }
 }
 
 
