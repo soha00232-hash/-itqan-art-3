@@ -61,7 +61,7 @@ summary::-webkit-details-marker{display:none}
 <section id="home">
 <div class="hero"><h1>أهلًا بكِ في منصة إتقان 🎨</h1><p>تعلمي، جربي، وشاركي إبداعك.</p></div>
 <div class="grid">
-<button class="card navcard navbtn" type="button" onclick="visitorMode=false;showSection('student')"><span>👧</span><b>دخول الطالبة</b></button>
+<button class="card navcard navbtn" type="button" onclick="enterStudentMode()"><span>👧</span><b>دخول الطالبة</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
 <button class="card navcard navbtn" type="button" onclick="showSection('star')"><span>⭐</span><b>نجمة إتقان</b></button>
@@ -73,16 +73,32 @@ summary::-webkit-details-marker{display:none}
 
 <section id="manager" class="section">
 <button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
-<div class="card" style="text-align:center">
-<div style="font-size:52px">👩‍💼</div>
-<h2>دخول الزوار</h2>
-<p>مرحبًا بكِ في منصة إتقان. يمكنكِ استعراض محتوى المنصة مباشرة دون تسجيل دخول طالبة.</p>
-<div class="grid" style="margin-top:16px">
-<button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
-<button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات</b></button>
-<button class="card navcard navbtn" type="button" onclick="showVisitorStar()"><span>⭐</span><b>نجمة إتقان</b></button>
+
+<div class="card" id="visitorLoginCard" style="text-align:center">
+  <div style="font-size:52px">👩‍💼</div>
+  <h2>دخول الزوار</h2>
+  <p>أدخلي الرقم السري لعرض المنصة بصلاحية الزائر.</p>
+  <div class="login-form">
+    <label><b>الرقم السري</b></label>
+    <input id="visitorPassword" type="password" inputmode="numeric" placeholder="أدخلي الرقم السري">
+    <button class="login-submit" type="button" onclick="visitorLogin()">دخول 🔐</button>
+    <div id="visitorLoginMsg" class="login-msg"></div>
+  </div>
 </div>
-<div class="private-note" style="margin-top:16px">وضع مشاهدة للزوار دون الحاجة لاختيار فصل أو اسم طالبة.</div>
+
+<div id="visitorDashboard" style="display:none">
+  <div class="card" style="text-align:center">
+    <div style="font-size:52px">👩‍💼</div>
+    <h2>مرحبًا بكِ في منصة إتقان</h2>
+    <p>يمكنكِ استعراض جميع أقسام المنصة، بما فيها سجلات الإنجاز وتقييماتها.</p>
+    <div class="grid" style="margin-top:16px">
+      <button class="card navcard navbtn" type="button" onclick="showSection('lessons')"><span>📚</span><b>الدروس والاختبارات</b></button>
+      <button class="card navcard navbtn" type="button" onclick="showSection('gallery')"><span>🖼️</span><b>مبدعات وسجلات الإنجاز</b></button>
+      <button class="card navcard navbtn" type="button" onclick="showVisitorStar()"><span>⭐</span><b>نجمة إتقان</b></button>
+    </div>
+    <div class="private-note" style="margin-top:16px">وضع مشاهدة للزوار دون الحاجة لاختيار فصل أو اسم طالبة.</div>
+    <div style="margin-top:12px"><button class="logout-btn" type="button" onclick="visitorLogout()">خروج الزائر</button></div>
+  </div>
 </div>
 </section>
 
@@ -111,7 +127,7 @@ summary::-webkit-details-marker{display:none}
 <h2 id="welcomeName">أهلًا بكِ</h2>
 <div><span class="student-badge" id="welcomeClass"></span></div>
 <p>تم تسجيل دخولك بنجاح. يمكنك الآن البدء بالدروس والاختبارات.</p>
-<button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button><button class="login-submit" style="margin-top:10px;background:#ffd9ec" type="button" onclick="openMyAchievementRecord()">📘 سجل إنجازي</button>
+<button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button>
 <div style="margin-top:12px"><button class="logout-btn" type="button" onclick="studentLogout()">تغيير الطالبة</button></div>
 </div>
 </section>
@@ -177,10 +193,10 @@ summary::-webkit-details-marker{display:none}
 
 <section id="gallery" class="section">
 <button class="btn" type="button" onclick="showSection('home')">← الرئيسية</button>
-<div class="hero"><h1>🎨 مبدعات</h1><p>الأعمال المتميزة وسجلات الإنجاز.</p></div>
+<div class="hero"><h1>🎨 مبدعات</h1><p>الأعمال المتميزة ومشاركات الأسرة.</p></div>
 <div class="card"><h2>🌟 الأعمال المتميزة</h2><p class="muted">صورة العمل + اسم الطالبة + اسم الدرس.</p><div id="featuredGallery" class="gallery-grid"><div class="loading">جارٍ تحميل الأعمال...</div></div></div>
 <div class="card"><h2>🤝 مشاركات الأسرة المتميزة</h2><p class="muted">المشاركات التي تختارها المعلمة للعرض.</p><div id="familyShowcaseGallery" class="gallery-grid"><div class="loading">جارٍ تحميل المشاركات...</div></div></div>
-<div class="card"><h2>📘 سجلات الإنجاز</h2><p class="muted">صور سجلات الإنجاز المضافة بواسطة المعلمة.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
+<div class="card" id="recordsCard" style="display:none"><h2>📘 سجلات الإنجاز</h2><p class="muted">صور سجلات الإنجاز المضافة بواسطة المعلمة.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
 </section>
 
 
@@ -243,14 +259,14 @@ summary::-webkit-details-marker{display:none}
 
 <div id="recordEvaluation" class="card teacher-panel">
   <h2>✅ تقييم سجل الإنجاز</h2>
-  <p class="muted">اختاري الفصل والطالبة، ثم حددي مستوى كل معيار. يُحفظ التقييم ويظهر في سجل الطالبة وعرض المديرة.</p>
+  <p class="muted">اختاري الفصل والطالبة، ثم حددي مستوى كل معيار. الدرجة النهائية لسجل الإنجاز من 20 نقطة.</p>
   <div class="eval-toolbar">
     <select id="evalClass" onchange="populateEvalStudents()"><option value="">اختاري الفصل</option><option value="ثالث/١">ثالث/١</option><option value="ثالث/٣">ثالث/٣</option></select>
     <select id="evalStudent" onchange="loadExistingEvaluationForTeacher()"><option value="">اختاري الطالبة</option></select>
   </div>
   <div id="recordEvalCriteria" class="eval-grid"></div>
   <div class="eval-summary">
-    <div><div class="muted">مجموع الدرجات</div><div id="recordEvalTotal" class="eval-total">0 / 40</div></div>
+    <div><div class="muted">مجموع الدرجات</div><div id="recordEvalTotal" class="eval-total">0 / 20</div></div>
     <div><div class="muted">التقدير العام</div><div id="recordEvalOverall" class="eval-total">—</div></div>
     <button id="recordEvalSaveBtn" class="eval-save" type="button" onclick="saveAchievementEvaluation()">حفظ التقييم</button>
   </div>
@@ -273,13 +289,25 @@ const TEACHER_ENDPOINT = SUPABASE_URL + '/functions/v1/itqan-teacher';
 function esc(v){return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
 function publicImageUrl(path){return sb.storage.from('teacher-gallery').getPublicUrl(path).data.publicUrl;}
 async function loadPublicGallery(){
-  const f=document.getElementById('featuredGallery'), fs=document.getElementById('familyShowcaseGallery'), r=document.getElementById('recordsGallery');
-  if(!f||!fs||!r)return;
-  f.innerHTML='<div class="loading">جارٍ تحميل الأعمال...</div>';fs.innerHTML='<div class="loading">جارٍ تحميل المشاركات...</div>';r.innerHTML='<div class="loading">جارٍ تحميل السجلات...</div>';
-  const [fw,ar]=await Promise.all([
-    sb.from('featured_works').select('*').order('created_at',{ascending:false}),
-    sb.from('achievement_records').select('*').order('created_at',{ascending:false})
-  ]);
+  const f=document.getElementById('featuredGallery'),
+        fs=document.getElementById('familyShowcaseGallery'),
+        r=document.getElementById('recordsGallery'),
+        recordsCard=document.getElementById('recordsCard');
+  if(!f||!fs)return;
+
+  const canViewRecords = visitorMode || !!teacherPass();
+  if(recordsCard) recordsCard.style.display=canViewRecords?'block':'none';
+
+  f.innerHTML='<div class="loading">جارٍ تحميل الأعمال...</div>';
+  fs.innerHTML='<div class="loading">جارٍ تحميل المشاركات...</div>';
+  if(r) r.innerHTML=canViewRecords?'<div class="loading">جارٍ تحميل السجلات...</div>':'';
+
+  const fw=await sb.from('featured_works').select('*').order('created_at',{ascending:false});
+  let ar={data:[],error:null};
+  if(canViewRecords){
+    ar=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
+  }
+
   if(fw.error){
     f.innerHTML='<div class="muted">تعذر تحميل الأعمال الآن.</div>';
     fs.innerHTML='<div class="muted">تعذر تحميل المشاركات الآن.</div>';
@@ -290,6 +318,8 @@ async function loadPublicGallery(){
     f.innerHTML=works.length?works.map(x=>`<div class="gallery-item"><img class="gallery-img" src="${publicImageUrl(x.image_path)}" alt="عمل متميز"><b>${esc(x.student_name)}</b><span class="muted">${esc(x.lesson_title)}</span></div>`).join(''):'<div class="gallery-item">🌟<b>سيتم إضافة الأعمال المتميزة هنا</b></div>';
     fs.innerHTML=family.length?family.map(x=>`<div class="gallery-item"><img class="gallery-img" src="${publicImageUrl(x.image_path)}" alt="مشاركة أسرة متميزة"><b>${esc(x.student_name)}</b><span class="muted">${esc(String(x.lesson_title).replace('شراكة الأسرة • ',''))}</span></div>`).join(''):'<div class="gallery-item">🤝<b>لا توجد مشاركة مختارة للعرض بعد</b></div>';
   }
+
+  if(!canViewRecords || !r) return;
   if(ar.error) r.innerHTML='<div class="muted">تعذر تحميل السجلات الآن.</div>';
   else if(!ar.data?.length) r.innerHTML='<div class="gallery-item">📘<b>سيتم إضافة سجلات الإنجاز هنا</b></div>';
   else {
@@ -333,6 +363,7 @@ async function teacherUploadRecordMulti(){
 }
 
 async function openDirectorRecord(nameEncoded){
+  if(!(visitorMode || !!teacherPass())){ showSection('home'); return; }
   const name=decodeURIComponent(nameEncoded);
   showSection('directorRecord');
   document.getElementById('directorRecordName').textContent=name;
@@ -353,19 +384,8 @@ async function openDirectorRecord(nameEncoded){
 }
 
 async function openMyAchievementRecord(){
-  let st=null;try{st=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
-  if(!st?.name){showSection('student');return;}
-  showSection('myRecord');
-  document.getElementById('myRecordStudent').textContent=st.name+' — '+st.className;
-  loadAchievementEvaluationView(st.name,st.className,'myRecordEvaluation');
-  const boxMap={'أوراق العمل':'myWorksheets','المهام الأدائية':'myPerformance','أعمالي المميزة':'mySpecial'};
-  Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ التحميل...</div>');
-  const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
-  if(error){Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="muted">تعذر التحميل الآن.</div>');return;}
-  for(const [cat,id] of Object.entries(boxMap)){
-    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===st.name&&p.category===cat;});
-    document.getElementById(id).innerHTML=rows.length?rows.map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}">`).join(''):'<div class="muted">لم تتم إضافة صور في هذا القسم بعد.</div>';
-  }
+  // سجلات الإنجاز مخصصة للمعلمة والزائر المصرح له فقط.
+  showSection('student');
 }
 
 function teacherPass(){return sessionStorage.getItem('itqanTeacherPass')||'';}
@@ -432,19 +452,73 @@ async function promoteFamily(btn,nameEncoded,titleEncoded,urlEncoded){
 async function teacherDeletePrivate(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='score'?'delete_score':'delete_family',id});await loadTeacherPrivateData();}catch(e){alert(e.message);}}
 
 let visitorMode=false;
+const VISITOR_PASSWORD='000';
+
+function visitorAuthorized(){
+  return sessionStorage.getItem('itqanVisitorAuth')==='1';
+}
 function openVisitorMode(){
-  visitorMode=true;
+  visitorMode=visitorAuthorized();
   showSection('manager');
+  renderVisitorState();
+}
+function renderVisitorState(){
+  const login=document.getElementById('visitorLoginCard');
+  const dash=document.getElementById('visitorDashboard');
+  if(!login||!dash)return;
+  const ok=visitorAuthorized();
+  visitorMode=ok;
+  login.style.display=ok?'none':'block';
+  dash.style.display=ok?'block':'none';
+}
+function visitorLogin(){
+  const input=document.getElementById('visitorPassword');
+  const msg=document.getElementById('visitorLoginMsg');
+  const pass=(input?.value||'').trim();
+  if(msg)msg.style.display='block';
+  if(pass===VISITOR_PASSWORD){
+    sessionStorage.setItem('itqanVisitorAuth','1');
+    visitorMode=true;
+    if(msg)msg.textContent='✅ تم الدخول بنجاح.';
+    renderVisitorState();
+  }else{
+    visitorMode=false;
+    sessionStorage.removeItem('itqanVisitorAuth');
+    if(msg)msg.textContent='❌ الرقم السري غير صحيح.';
+  }
+}
+function visitorLogout(){
+  visitorMode=false;
+  sessionStorage.removeItem('itqanVisitorAuth');
+  const input=document.getElementById('visitorPassword');
+  if(input)input.value='';
+  showSection('home');
+}
+function enterStudentMode(){
+  visitorMode=false;
+  sessionStorage.removeItem('itqanVisitorAuth');
+  showSection('student');
 }
 function showVisitorStar(){
+  if(!visitorAuthorized()){ openVisitorMode(); return; }
   visitorMode=true;
   showSection('star');
 }
 
 function showSection(id){
+  // منع الوصول لسجلات الإنجاز دون صلاحية زائر/معلمة
+  if((id==='directorRecord'||id==='myRecord') && !(visitorMode || !!teacherPass())) id='home';
+
   document.querySelectorAll('main > section').forEach(s=>s.style.display='none');
   const target=document.getElementById(id);
-  if(target){target.style.display='block'; if(id==='star')renderStarStatus(); if(id==='gallery')loadPublicGallery(); if(id==='teacher')renderTeacherState(); window.scrollTo({top:0,behavior:'smooth'});}
+  if(target){
+    target.style.display='block';
+    if(id==='manager')renderVisitorState();
+    if(id==='star')renderStarStatus();
+    if(id==='gallery')loadPublicGallery();
+    if(id==='teacher')renderTeacherState();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
 }
 
 const lessonAnswers = {};
@@ -604,7 +678,7 @@ const achievementEvalCriteria = [
 ];
 const achievementEvalLabels={4:'ممتاز',3:'جيد جداً',2:'جيد',1:'يحتاج إلى تحسين'};
 let achievementEvalValues={};
-function achievementOverall(total){if(total>=36)return 'ممتاز';if(total>=30)return 'جيد جداً';if(total>=20)return 'جيد';return 'يحتاج إلى تحسين';}
+function achievementOverall(total){if(total>=18)return 'ممتاز';if(total>=15)return 'جيد جداً';if(total>=10)return 'جيد';return 'يحتاج إلى تحسين';}
 function renderAchievementEvaluationForm(){
   const box=document.getElementById('recordEvalCriteria');if(!box)return;
   box.innerHTML=achievementEvalCriteria.map((c,i)=>`<div class="eval-row"><div class="eval-criterion">${i+1}. ${esc(c)}</div>${[4,3,2,1].map(v=>`<button type="button" class="eval-choice" data-criterion="${i+1}" data-value="${v}" onclick="selectAchievementEval(${i+1},${v},this)">${achievementEvalLabels[v]}</button>`).join('')}</div>`).join('');
@@ -615,10 +689,11 @@ function selectAchievementEval(index,value,btn){
   const row=btn.closest('.eval-row');row?.querySelectorAll('.eval-choice').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');updateAchievementEvalSummary();
 }
 function updateAchievementEvalSummary(){
-  const total=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b||0),0);
+  const rawTotal=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b||0),0);
+  const total20=rawTotal/2;
   const count=Object.keys(achievementEvalValues).length;
   const t=document.getElementById('recordEvalTotal'),o=document.getElementById('recordEvalOverall');
-  if(t)t.textContent=`${total} / 40`;if(o)o.textContent=count===10?achievementOverall(total):'—';
+  if(t)t.textContent=`${total20} / 20`;if(o)o.textContent=count===10?achievementOverall(total20):'—';
 }
 function populateEvalStudents(){
   const cls=document.getElementById('evalClass')?.value||'';const sel=document.getElementById('evalStudent');if(!sel)return;
@@ -648,15 +723,17 @@ async function saveAchievementEvaluation(){
   if(Object.keys(achievementEvalValues).length!==10){if(st)st.textContent='🌷 قيّمي المعايير العشرة كلها قبل الحفظ.';return;}
   const rows=achievementEvalCriteria.map((title,i)=>({student_name:name,class_name:cls,lesson_id:`achievement_eval_${i+1}`,lesson_title:`تقييم سجل الإنجاز • ${title}`,score:Number(achievementEvalValues[i+1]),total:4}));
   if(btn)btn.disabled=true;if(st)st.textContent='⏳ جارٍ حفظ التقييم...';
-  try{const {error}=await sb.from('student_scores').insert(rows);if(error)throw error;const total=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b),0);if(st)st.textContent=`✅ تم حفظ التقييم: ${total}/40 — ${achievementOverall(total)}`;}
+  try{const {error}=await sb.from('student_scores').insert(rows);if(error)throw error;const rawTotal=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b),0);const total20=rawTotal/2;if(st)st.textContent=`✅ تم حفظ التقييم: ${total20}/20 — ${achievementOverall(total20)}`;}
   catch(e){console.error(e);if(st)st.textContent='❌ تعذر حفظ التقييم الآن.';}finally{if(btn)btn.disabled=false;}
 }
 async function loadAchievementEvaluationView(name,className,targetId){
   const el=document.getElementById(targetId);if(!el)return;el.innerHTML='<div class="loading">جارٍ تحميل التقييم...</div>';
   try{const latest=await fetchLatestAchievementEvaluation(name,className);const keys=Object.keys(latest);if(!keys.length){el.innerHTML='<div class="muted">لم يتم إضافة تقييم للسجل بعد.</div>';return;}
     let total=0,count=0,rows='';for(let i=1;i<=10;i++){const r=latest[i];if(!r)continue;const v=Number(r.score||0);total+=v;count++;rows+=`<div class="eval-view-row"><span>${i}. ${esc(achievementEvalCriteria[i-1])}</span><span class="eval-view-badge">${achievementEvalLabels[v]||v}</span></div>`;}
-    const fullTotal=count===10?total:Math.round((total/(count*4))*40);const overall=achievementOverall(fullTotal);
-    el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${count===10?total+'/40':total+'/'+(count*4)}</span><span>${esc(overall)}</span></div>`;
+    const total20=total/2;
+    const normalized20=count?((total/(count*4))*20):0;
+    const overall=achievementOverall(count===10?total20:normalized20);
+    el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${count===10?total20+'/20':total20+'/'+(count*2)}</span><span>${esc(overall)}</span></div>`;
   }catch(e){console.error(e);el.innerHTML='<div class="muted">تعذر تحميل تقييم السجل الآن.</div>';}
 }
 
@@ -738,5 +815,5 @@ function studentLogout(){
   renderStudentLogin();
 }
 
-document.addEventListener('DOMContentLoaded',()=>{showSection('home');renderStudentLogin();loadPublicGallery();renderAchievementEvaluationForm();});
+document.addEventListener('DOMContentLoaded',()=>{visitorMode=visitorAuthorized();showSection('home');renderStudentLogin();loadPublicGallery();renderAchievementEvaluationForm();});
 </script></body></html>
