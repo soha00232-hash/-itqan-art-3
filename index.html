@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>منصة إتقان للتربية الفنية</title>
+<meta name="itqan-version" content="task-points-v2">
 <style>
 *{box-sizing:border-box} html{scroll-behavior:smooth}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#fbf8ff;color:#30283a}
@@ -475,15 +476,15 @@ async function awardTaskPoints(){
   if(!cls||!name||!lesson){if(st)st.textContent='🌷 اختاري الفصل والطالبة والدرس أولًا.';return;}
   if(st)st.textContent='⏳ جارٍ اعتماد المهمة...';
   try{
-    const taskId='task_'+lesson;
-    const {data:existing,error:findErr}=await sb.from('student_scores').select('id,score,total').eq('student_name',name).eq('class_name',cls).eq('lesson_id',taskId).limit(1);
-    if(findErr)throw findErr;
-    if(existing&&existing.length){if(st)st.textContent='✅ المهمة معتمدة مسبقًا، ولن تتكرر الـ 3 نقاط.';return;}
-    const {error}=await sb.from('student_scores').insert({student_name:name,class_name:cls,lesson_id:taskId,lesson_title:'إنجاز مهمة • '+(lessonTitles[lesson]||lesson),score:3,total:3});
-    if(error)throw error;
-    if(st)st.textContent='⭐ تم اعتماد المهمة وإضافة 3 نقاط للطالبة.';
+    const result=await teacherApi({action:'award_task',student_name:name,class_name:cls,lesson_id:lesson});
+    if(st)st.textContent=result.already
+      ? '✅ المهمة معتمدة مسبقًا، ولن تتكرر الـ 3 نقاط.'
+      : '⭐ تم اعتماد المهمة وإضافة 3 نقاط للطالبة.';
     await loadTeacherPrivateData();
-  }catch(e){console.error(e);if(st)st.textContent='❌ تعذر اعتماد المهمة الآن.';}
+  }catch(e){
+    console.error(e);
+    if(st)st.textContent='❌ لم يتم حفظ نقاط المهمة. حاولي مرة أخرى.';
+  }
 }
 
 function showTeacherTab(id){document.querySelectorAll('.teacher-panel').forEach(x=>x.classList.remove('active'));document.getElementById(id)?.classList.add('active');}
