@@ -309,9 +309,10 @@ header.itqan-header{
 <button class="btn" type="button" onclick="showSection('student')">رجوع</button>
 <div class="hero"><h1>📘 سجل إنجازي</h1><p id="myRecordStudent"></p></div>
 <div class="card">
+  <div class="record-section"><h3>👧 السيرة الذاتية</h3><div id="myBio" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="myWorksheets" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="myPerformance" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="mySpecial" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام</h3><div id="myTasks" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>📝 الاختبارات</h3><div id="myTests" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="myRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
 </div>
 </section>
@@ -321,9 +322,10 @@ header.itqan-header{
 <button class="btn" type="button" onclick="showSection('gallery')">رجوع إلى سجلات الإنجاز</button>
 <div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للمديرة</p></div>
 <div class="card">
+  <div class="record-section"><h3>👧 السيرة الذاتية</h3><div id="directorBio" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="directorWorksheets" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="directorPerformance" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="directorSpecial" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام</h3><div id="directorTasks" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>📝 الاختبارات</h3><div id="directorTests" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="directorRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
 </div>
 </section>
@@ -353,9 +355,10 @@ header.itqan-header{
       <input id="recordStudentName" type="text" placeholder="اسم الطالبة">
       <select id="recordCategory">
         <option value="">اختاري القسم</option>
+        <option value="السيرة الذاتية">👧 السيرة الذاتية</option>
         <option value="أوراق العمل">📄 أوراق العمل</option>
-        <option value="المهام الأدائية">⭐ المهام الأدائية</option>
-        <option value="أعمالي المميزة">🎨 أعمالي المميزة</option>
+        <option value="المهام">⭐ المهام</option>
+        <option value="الاختبارات">📝 الاختبارات</option>
       </select>
       <input id="recordFile" type="file" accept="image/*" multiple>
       <button class="login-submit" onclick="teacherUploadRecordMulti()">+ إضافة الصور إلى سجل الطالبة</button>
@@ -488,7 +491,10 @@ async function loadPublicGallery(){
 function encodeRecordStudent(name,category){return name+'|||'+category;}
 function parseRecordStudent(v){
   const parts=String(v||'').split('|||');
-  return {name:parts[0]||'',category:parts[1]||'عام'};
+  let category=parts[1]||'عام';
+  if(category==='سيرتي الذاتية') category='السيرة الذاتية';
+  if(category==='المهام الأدائية') category='المهام';
+  return {name:parts[0]||'',category};
 }
 async function teacherUploadRecordMulti(){
   const status=document.getElementById('recordStatus');
@@ -524,7 +530,7 @@ async function openDirectorRecord(nameEncoded){
   showSection('directorRecord');
   document.getElementById('directorRecordName').textContent=name;
   loadAchievementEvaluationView(name,null,'directorRecordEvaluation');
-  const boxMap={'أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance','أعمالي المميزة':'directorSpecial'};
+  const boxMap={'السيرة الذاتية':'directorBio','أوراق العمل':'directorWorksheets','المهام':'directorTasks','الاختبارات':'directorTests'};
   Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ تحميل الصور...</div>');
   const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
   if(error){
