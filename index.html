@@ -301,7 +301,7 @@ header.itqan-header{
 <div class="hero"><h1>🎨 مبدعات</h1><p>الأعمال المتميزة ومشاركات الأسرة.</p></div>
 <div class="card"><h2>🌟 الأعمال المتميزة</h2><p class="muted">صورة العمل + اسم الطالبة + اسم الدرس.</p><div id="featuredGallery" class="gallery-grid"><div class="loading">جارٍ تحميل الأعمال...</div></div></div>
 <div class="card"><h2>🤝 مشاركات الأسرة المتميزة</h2><p class="muted">المشاركات التي تختارها المعلمة للعرض.</p><div id="familyShowcaseGallery" class="gallery-grid"><div class="loading">جارٍ تحميل المشاركات...</div></div></div>
-<div class="card" id="recordsCard" style="display:none"><h2>📘 سجلات الإنجاز</h2><p class="muted">صور سجلات الإنجاز المضافة بواسطة المعلمة.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
+<div class="card" id="recordsCard" style="display:none"><h2>📘 سجلات الإنجاز</h2><p class="muted">كل طالبة لها سجل واحد مرتب: السيرة الذاتية، أوراق العمل، المهام، الاختبارات، ثم التقييم.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
 </section>
 
 
@@ -350,7 +350,7 @@ header.itqan-header{
 </div>
 <div id="uploadWork" class="card teacher-panel active"><h2>رفع عمل متميز</h2><div class="teacher-upload"><input id="workStudentName" type="text" placeholder="اسم الطالبة"><select id="workLessonTitle"><option value="">اختاري الدرس</option><option>الاسكتش</option><option>الزخارف الشعبية السعودية</option><option>تكوينات وملامس مطبوعة</option><option>أطبع بوحداتي الهندسية</option><option>طباعة وحدات ذات ملامس مختلفة</option><option>النسيج البسيط الملون</option></select><input id="workFile" type="file" accept="image/*"><button class="login-submit" onclick="teacherUpload('featured')">رفع العمل</button><div id="workStatus" class="login-msg"></div></div><div id="teacherFeaturedList" class="teacher-list" style="margin-top:14px"></div></div>
 <div id="uploadRecord" class="card teacher-panel"><h2>📘 سجل إنجاز الطالبة</h2>
-    <p class="muted">اختاري اسم الطالبة والقسم، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
+    <p class="muted">اختاري اسم الطالبة والقسم. كل إضافة جديدة تُحفظ داخل نفس القسم في سجل الطالبة، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
     <div class="teacher-upload">
       <input id="recordStudentName" type="text" placeholder="اسم الطالبة">
       <select id="recordCategory">
@@ -364,7 +364,8 @@ header.itqan-header{
       <button class="login-submit" onclick="teacherUploadRecordMulti()">+ إضافة الصور إلى سجل الطالبة</button>
       <div id="recordStatus" class="login-msg"></div>
     </div>
-    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div><div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div>
+    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div>
+  </div>
 
 <div id="recordEvaluation" class="card teacher-panel">
   <h2>✅ تقييم سجل الإنجاز</h2>
@@ -484,7 +485,7 @@ async function loadPublicGallery(){
   else {
     const grouped={};
     (ar.data||[]).forEach(x=>{const p=parseRecordStudent(x.student_name);(grouped[p.name]=grouped[p.name]||[]).push({...x,_cat:p.category});});
-    r.innerHTML=Object.entries(grouped).map(([name,rows])=>`<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}')"><b style="font-size:18px">${esc(name)}</b><div class="muted">${rows.length} صورة في سجل الإنجاز — اضغطي لفتح السجل كاملًا</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`).join('');
+    r.innerHTML=Object.entries(grouped).map(([name,rows])=>`<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}')"><b style="font-size:18px">${esc(name)}</b><div class="muted">سجل واحد مرتب • ${rows.length} صورة مضافة — اضغطي لفتح السجل</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`).join('');
   }
 }
 
@@ -612,7 +613,27 @@ async function loadTeacherGalleryLists(){
   if(!teacherPass())return; const [fw,ar]=await Promise.all([sb.from('featured_works').select('*').order('created_at',{ascending:false}),sb.from('achievement_records').select('*').order('created_at',{ascending:false})]);
   const fl=document.getElementById('teacherFeaturedList'),rl=document.getElementById('teacherRecordsList');
   if(fl) fl.innerHTML=fw.data?.length?fw.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> — ${esc(x.lesson_title)}<img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('featured',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد أعمال مضافة بعد.</div>';
-  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>{const p=parseRecordStudent(x.student_name);return `<div class="teacher-row"><b>${esc(p.name)}</b> <span class="student-badge">${esc(p.category)}</span><img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`}).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
+  if(rl){
+    if(!ar.data?.length){
+      rl.innerHTML='<div class="muted">لا توجد سجلات مضافة بعد.</div>';
+    }else{
+      const categoryOrder=['السيرة الذاتية','أوراق العمل','المهام','الاختبارات'];
+      const grouped={};
+      (ar.data||[]).forEach(x=>{
+        const p=parseRecordStudent(x.student_name);
+        grouped[p.name]=grouped[p.name]||{};
+        grouped[p.name][p.category]=grouped[p.name][p.category]||[];
+        grouped[p.name][p.category].push(x);
+      });
+      rl.innerHTML=Object.entries(grouped).map(([name,cats])=>{
+        const sections=categoryOrder.map(cat=>{
+          const rows=cats[cat]||[];
+          return `<div class="record-section" style="margin-top:12px"><h3 style="margin-bottom:8px">${cat==='السيرة الذاتية'?'👧':cat==='أوراق العمل'?'📄':cat==='المهام'?'⭐':'📝'} ${esc(cat)}</h3>${rows.length?`<div class="record-mini-grid">${rows.map(x=>`<div style="position:relative"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"><button class="danger-btn" style="width:100%;margin-top:6px" onclick="teacherDelete('record',${x.id})">حذف الصورة</button></div>`).join('')}</div>`:'<div class="muted">لا توجد إضافات في هذا القسم بعد.</div>'}</div>`;
+        }).join('');
+        return `<div class="card" style="margin:12px 0"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 style="margin:0">📘 ${esc(name)}</h3><button type="button" class="btn" onclick="openDirectorRecord('${encodeURIComponent(name)}')">فتح السجل كاملًا</button></div>${sections}</div>`;
+      }).join('');
+    }
+  }
 }
 async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='featured'?'delete_featured':'delete_record',id});await loadTeacherGalleryLists();await loadPublicGallery();}catch(e){alert(e.message);}}
 async function loadTeacherPrivateData(){
