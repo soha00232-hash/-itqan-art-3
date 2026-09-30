@@ -51,6 +51,7 @@ summary::-webkit-details-marker{display:none}
 .eval-summary{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:14px;padding:14px;border-radius:16px;background:#fff5fa}.eval-total{font-size:20px;font-weight:800}.eval-save{border:0;border-radius:14px;padding:12px 18px;background:#e994be;color:#fff;font-weight:800;font-family:inherit;cursor:pointer}.eval-save:disabled{opacity:.55;cursor:not-allowed}.eval-status{margin-top:10px;font-size:14px}
 .eval-view{display:grid;gap:8px}.eval-view-row{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;border-bottom:1px dashed #eaddea}.eval-view-row:last-child{border-bottom:0}.eval-view-badge{display:inline-block;padding:5px 10px;border-radius:999px;background:#f5e7f0;font-weight:700;white-space:nowrap}.eval-overall{display:flex;justify-content:space-between;gap:12px;align-items:center;background:#fff5fa;border:1px solid #efdeea;border-radius:16px;padding:13px;margin-top:12px;font-weight:800}
 @media(max-width:780px){.eval-row{grid-template-columns:1fr 1fr}.eval-criterion{grid-column:1/-1}.eval-toolbar{grid-template-columns:1fr}.eval-choice{font-size:12px}.eval-overall,.eval-view-row{align-items:flex-start}}
+.inline-eval-editor{margin-top:12px;padding-top:12px;border-top:1px dashed #eaddea}.inline-eval-note{background:#f8f1fc;border-radius:14px;padding:11px 13px;margin-bottom:12px;color:#665c6d;font-size:14px}.eval-phrase-box{margin-top:16px;padding:14px;border-radius:18px;background:#fffafc;border:1px solid #efdfea}.eval-phrase-title{font-weight:800;margin-bottom:9px}.eval-phrase-options{display:grid;gap:8px}.eval-phrase-choice{width:100%;text-align:right;border:1px solid #e8dce7;background:#fff;border-radius:13px;padding:11px 12px;cursor:pointer;font-family:inherit;font-size:14px;line-height:1.6}.eval-phrase-choice.selected{background:#f4ddec;border-color:#d894bb;font-weight:800;box-shadow:0 0 0 2px #f7e8f1 inset}.eval-open-btn{width:100%;margin-top:9px;border:0;border-radius:13px;padding:10px 12px;background:#efe2ff;color:#5d4077;font-family:inherit;font-weight:800;cursor:pointer}
 
 
 
@@ -301,7 +302,7 @@ header.itqan-header{
 <div class="hero"><h1>🎨 مبدعات</h1><p>الأعمال المتميزة ومشاركات الأسرة.</p></div>
 <div class="card"><h2>🌟 الأعمال المتميزة</h2><p class="muted">صورة العمل + اسم الطالبة + اسم الدرس.</p><div id="featuredGallery" class="gallery-grid"><div class="loading">جارٍ تحميل الأعمال...</div></div></div>
 <div class="card"><h2>🤝 مشاركات الأسرة المتميزة</h2><p class="muted">المشاركات التي تختارها المعلمة للعرض.</p><div id="familyShowcaseGallery" class="gallery-grid"><div class="loading">جارٍ تحميل المشاركات...</div></div></div>
-<div class="card" id="recordsCard" style="display:none"><h2>📘 سجلات الإنجاز</h2><p class="muted">كل طالبة لها سجل واحد مرتب: السيرة الذاتية، أوراق العمل، المهام، الاختبارات، ثم التقييم.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
+<div class="card" id="recordsCard" style="display:none"><h2>📘 سجلات الإنجاز</h2><p class="muted">صور سجلات الإنجاز المضافة بواسطة المعلمة.</p><div id="recordsGallery" class="gallery-grid"><div class="loading">جارٍ تحميل السجلات...</div></div></div>
 </section>
 
 
@@ -309,10 +310,9 @@ header.itqan-header{
 <button class="btn" type="button" onclick="showSection('student')">رجوع</button>
 <div class="hero"><h1>📘 سجل إنجازي</h1><p id="myRecordStudent"></p></div>
 <div class="card">
-  <div class="record-section"><h3>👧 السيرة الذاتية</h3><div id="myBio" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="myWorksheets" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>⭐ المهام</h3><div id="myTasks" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>📝 الاختبارات</h3><div id="myTests" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="myPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="mySpecial" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="myRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
 </div>
 </section>
@@ -320,13 +320,29 @@ header.itqan-header{
 
 <section id="directorRecord" class="section">
 <button class="btn" type="button" onclick="showSection('gallery')">رجوع إلى سجلات الإنجاز</button>
-<div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للمديرة</p></div>
+<div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>السجل والتقييم الإلكتروني الخاص بالطالبة</p></div>
 <div class="card">
-  <div class="record-section"><h3>👧 السيرة الذاتية</h3><div id="directorBio" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="directorWorksheets" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>⭐ المهام</h3><div id="directorTasks" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>📝 الاختبارات</h3><div id="directorTests" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="directorRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
+  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="directorPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>🎨 أعمالي المميزة</h3><div id="directorSpecial" class="record-mini-grid"></div></div>
+  <div class="record-section">
+    <h3>✅ تقييم سجل الإنجاز</h3>
+    <div id="directorRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div>
+    <div id="directorRecordEvaluationEditor" class="inline-eval-editor" style="display:none">
+      <div class="inline-eval-note">هذا التقييم خاص بهذه الطالبة فقط. اختاري العبارة المناسبة لكل معيار ثم احفظي التقييم.</div>
+      <div id="inlineEvalCriteria" class="eval-grid"></div>
+      <div class="eval-phrase-box">
+        <div class="eval-phrase-title">💬 عبارة التقييم النهائي</div>
+        <div id="inlineEvalPhraseChoices" class="eval-phrase-options"></div>
+      </div>
+      <div class="eval-summary">
+        <div><div class="muted">مجموع الدرجات</div><div id="inlineEvalTotal" class="eval-total">0 / 20</div></div>
+        <div><div class="muted">التقدير العام</div><div id="inlineEvalOverall" class="eval-total">—</div></div>
+        <button id="inlineEvalSaveBtn" class="eval-save" type="button" onclick="saveInlineAchievementEvaluation()">💾 حفظ تقييم الطالبة</button>
+      </div>
+      <div id="inlineEvalStatus" class="eval-status"></div>
+    </div>
+  </div>
 </div>
 </section>
 
@@ -343,29 +359,26 @@ header.itqan-header{
 <div class="teacher-tabs">
 <button class="teacher-tab" onclick="showTeacherTab('uploadWork')">🌟 عمل متميز</button>
 <button class="teacher-tab" onclick="showTeacherTab('uploadRecord')">📘 سجل إنجاز</button>
-<button class="teacher-tab" onclick="showTeacherTab('recordEvaluation')">✅ تقييم السجل</button>
 <button class="teacher-tab" onclick="showTeacherTab('taskPoints')">🎯 نقاط المهمات</button>
 <button class="teacher-tab" onclick="showTeacherTab('scores')">📊 الدرجات</button>
 <button class="teacher-tab" onclick="showTeacherTab('family')">🤝 مشاركات الأسرة</button>
 </div>
 <div id="uploadWork" class="card teacher-panel active"><h2>رفع عمل متميز</h2><div class="teacher-upload"><input id="workStudentName" type="text" placeholder="اسم الطالبة"><select id="workLessonTitle"><option value="">اختاري الدرس</option><option>الاسكتش</option><option>الزخارف الشعبية السعودية</option><option>تكوينات وملامس مطبوعة</option><option>أطبع بوحداتي الهندسية</option><option>طباعة وحدات ذات ملامس مختلفة</option><option>النسيج البسيط الملون</option></select><input id="workFile" type="file" accept="image/*"><button class="login-submit" onclick="teacherUpload('featured')">رفع العمل</button><div id="workStatus" class="login-msg"></div></div><div id="teacherFeaturedList" class="teacher-list" style="margin-top:14px"></div></div>
 <div id="uploadRecord" class="card teacher-panel"><h2>📘 سجل إنجاز الطالبة</h2>
-    <p class="muted">اختاري اسم الطالبة والقسم. كل إضافة جديدة تُحفظ داخل نفس القسم في سجل الطالبة، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
+    <p class="muted">اختاري اسم الطالبة والقسم، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
     <div class="teacher-upload">
       <input id="recordStudentName" type="text" placeholder="اسم الطالبة">
       <select id="recordCategory">
         <option value="">اختاري القسم</option>
-        <option value="السيرة الذاتية">👧 السيرة الذاتية</option>
         <option value="أوراق العمل">📄 أوراق العمل</option>
-        <option value="المهام">⭐ المهام</option>
-        <option value="الاختبارات">📝 الاختبارات</option>
+        <option value="المهام الأدائية">⭐ المهام الأدائية</option>
+        <option value="أعمالي المميزة">🎨 أعمالي المميزة</option>
       </select>
       <input id="recordFile" type="file" accept="image/*" multiple>
       <button class="login-submit" onclick="teacherUploadRecordMulti()">+ إضافة الصور إلى سجل الطالبة</button>
       <div id="recordStatus" class="login-msg"></div>
     </div>
-    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div>
-  </div>
+    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div><div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div>
 
 <div id="recordEvaluation" class="card teacher-panel">
   <h2>✅ تقييم سجل الإنجاز</h2>
@@ -485,17 +498,14 @@ async function loadPublicGallery(){
   else {
     const grouped={};
     (ar.data||[]).forEach(x=>{const p=parseRecordStudent(x.student_name);(grouped[p.name]=grouped[p.name]||[]).push({...x,_cat:p.category});});
-    r.innerHTML=Object.entries(grouped).map(([name,rows])=>`<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}')"><b style="font-size:18px">${esc(name)}</b><div class="muted">سجل واحد مرتب • ${rows.length} صورة مضافة — اضغطي لفتح السجل</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`).join('');
+    r.innerHTML=Object.entries(grouped).map(([name,rows])=>`<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}')"><b style="font-size:18px">${esc(name)}</b><div class="muted">${rows.length} صورة في سجل الإنجاز — اضغطي لفتح السجل كاملًا</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`).join('');
   }
 }
 
 function encodeRecordStudent(name,category){return name+'|||'+category;}
 function parseRecordStudent(v){
   const parts=String(v||'').split('|||');
-  let category=parts[1]||'عام';
-  if(category==='سيرتي الذاتية') category='السيرة الذاتية';
-  if(category==='المهام الأدائية') category='المهام';
-  return {name:parts[0]||'',category};
+  return {name:parts[0]||'',category:parts[1]||'عام'};
 }
 async function teacherUploadRecordMulti(){
   const status=document.getElementById('recordStatus');
@@ -530,8 +540,19 @@ async function openDirectorRecord(nameEncoded){
   const name=decodeURIComponent(nameEncoded);
   showSection('directorRecord');
   document.getElementById('directorRecordName').textContent=name;
-  loadAchievementEvaluationView(name,null,'directorRecordEvaluation');
-  const boxMap={'السيرة الذاتية':'directorBio','أوراق العمل':'directorWorksheets','المهام':'directorTasks','الاختبارات':'directorTests'};
+  const cls=getStudentClassByName(name);
+  const viewer=document.getElementById('directorRecordEvaluation');
+  const editor=document.getElementById('directorRecordEvaluationEditor');
+  if(teacherPass()){
+    if(viewer)viewer.style.display='none';
+    if(editor)editor.style.display='block';
+    await loadInlineAchievementEvaluation(name,cls);
+  }else{
+    if(editor)editor.style.display='none';
+    if(viewer)viewer.style.display='grid';
+    loadAchievementEvaluationView(name,cls||null,'directorRecordEvaluation');
+  }
+  const boxMap={'أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance','أعمالي المميزة':'directorSpecial'};
   Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ تحميل الصور...</div>');
   const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
   if(error){
@@ -613,27 +634,7 @@ async function loadTeacherGalleryLists(){
   if(!teacherPass())return; const [fw,ar]=await Promise.all([sb.from('featured_works').select('*').order('created_at',{ascending:false}),sb.from('achievement_records').select('*').order('created_at',{ascending:false})]);
   const fl=document.getElementById('teacherFeaturedList'),rl=document.getElementById('teacherRecordsList');
   if(fl) fl.innerHTML=fw.data?.length?fw.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> — ${esc(x.lesson_title)}<img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('featured',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد أعمال مضافة بعد.</div>';
-  if(rl){
-    if(!ar.data?.length){
-      rl.innerHTML='<div class="muted">لا توجد سجلات مضافة بعد.</div>';
-    }else{
-      const categoryOrder=['السيرة الذاتية','أوراق العمل','المهام','الاختبارات'];
-      const grouped={};
-      (ar.data||[]).forEach(x=>{
-        const p=parseRecordStudent(x.student_name);
-        grouped[p.name]=grouped[p.name]||{};
-        grouped[p.name][p.category]=grouped[p.name][p.category]||[];
-        grouped[p.name][p.category].push(x);
-      });
-      rl.innerHTML=Object.entries(grouped).map(([name,cats])=>{
-        const sections=categoryOrder.map(cat=>{
-          const rows=cats[cat]||[];
-          return `<div class="record-section" style="margin-top:12px"><h3 style="margin-bottom:8px">${cat==='السيرة الذاتية'?'👧':cat==='أوراق العمل'?'📄':cat==='المهام'?'⭐':'📝'} ${esc(cat)}</h3>${rows.length?`<div class="record-mini-grid">${rows.map(x=>`<div style="position:relative"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"><button class="danger-btn" style="width:100%;margin-top:6px" onclick="teacherDelete('record',${x.id})">حذف الصورة</button></div>`).join('')}</div>`:'<div class="muted">لا توجد إضافات في هذا القسم بعد.</div>'}</div>`;
-        }).join('');
-        return `<div class="card" style="margin:12px 0"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 style="margin:0">📘 ${esc(name)}</h3><button type="button" class="btn" onclick="openDirectorRecord('${encodeURIComponent(name)}')">فتح السجل كاملًا</button></div>${sections}</div>`;
-      }).join('');
-    }
-  }
+  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>{const p=parseRecordStudent(x.student_name);return `<div class="teacher-row"><b>${esc(p.name)}</b> <span class="student-badge">${esc(p.category)}</span><img src="${publicImageUrl(x.image_path)}"><button class="eval-open-btn" type="button" onclick="openDirectorRecord('${encodeURIComponent(p.name)}')">✅ فتح سجل الطالبة وتقييمه</button><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`}).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
 }
 async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='featured'?'delete_featured':'delete_record',id});await loadTeacherGalleryLists();await loadPublicGallery();}catch(e){alert(e.message);}}
 async function loadTeacherPrivateData(){
@@ -912,7 +913,7 @@ const achievementEvalCriteria = [
   'جودة التنسيق والترتيب العام',
   'الالتزام بتعليمات السجل'
 ];
-const achievementEvalLabels={4:'ممتاز',3:'جيد جداً',2:'جيد',1:'يحتاج إلى تحسين'};
+const achievementEvalLabels={4:'متحقق بإتقان',3:'متحقق بدرجة جيدة',2:'متحقق جزئيًا',1:'يحتاج إلى دعم'};
 let achievementEvalValues={};
 function achievementOverall(total){if(total>=18)return 'ممتاز';if(total>=15)return 'جيد جداً';if(total>=10)return 'جيد';return 'يحتاج إلى تحسين';}
 function renderAchievementEvaluationForm(){
@@ -964,13 +965,71 @@ async function saveAchievementEvaluation(){
 }
 async function loadAchievementEvaluationView(name,className,targetId){
   const el=document.getElementById(targetId);if(!el)return;el.innerHTML='<div class="loading">جارٍ تحميل التقييم...</div>';
-  try{const latest=await fetchLatestAchievementEvaluation(name,className);const keys=Object.keys(latest);if(!keys.length){el.innerHTML='<div class="muted">لم يتم إضافة تقييم للسجل بعد.</div>';return;}
+  try{const [latest,phraseRow]=await Promise.all([fetchLatestAchievementEvaluation(name,className),fetchLatestAchievementPhrase(name,className)]);const keys=Object.keys(latest);if(!keys.length){el.innerHTML='<div class="muted">لم يتم إضافة تقييم للسجل بعد.</div>';return;}
     let total=0,count=0,rows='';for(let i=1;i<=10;i++){const r=latest[i];if(!r)continue;const v=Number(r.score||0);total+=v;count++;rows+=`<div class="eval-view-row"><span>${i}. ${esc(achievementEvalCriteria[i-1])}</span><span class="eval-view-badge">${achievementEvalLabels[v]||v}</span></div>`;}
     const total20=total/2;
     const normalized20=count?((total/(count*4))*20):0;
     const overall=achievementOverall(count===10?total20:normalized20);
-    el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${count===10?total20+'/20':total20+'/'+(count*2)}</span><span>${esc(overall)}</span></div>`;
+    const phrase=phraseFromSavedRow(phraseRow).text;
+    el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${count===10?total20+'/20':total20+'/'+(count*2)}</span><span>${esc(overall)}</span></div>`+(phrase?`<div class="eval-phrase-box"><div class="eval-phrase-title">💬 عبارة التقييم</div><div>${esc(phrase)}</div></div>`:'');
   }catch(e){console.error(e);el.innerHTML='<div class="muted">تعذر تحميل تقييم السجل الآن.</div>';}
+}
+
+
+const achievementEvalFinalPhrases={
+  4:'سجل متميز ومتكامل ومنظم، ويعكس عناية الطالبة بإنجازها.',
+  3:'سجل جيد ومنظم، ويحتاج إلى استكمال بسيط لبعض العناصر.',
+  2:'سجل جيد، ويحتاج إلى استكمال بعض العناصر وتحسين التنظيم.',
+  1:'يحتاج السجل إلى متابعة واستكمال العناصر وتحسين التنظيم.'
+};
+let inlineAchievementEval={name:'',className:'',values:{},phraseValue:0};
+function getStudentClassByName(name){
+  for(const [cls,names] of Object.entries(studentNamesByClass||{})){if((names||[]).includes(name))return cls;}
+  return '';
+}
+function renderInlineAchievementEvaluation(){
+  const box=document.getElementById('inlineEvalCriteria');if(!box)return;
+  box.innerHTML=achievementEvalCriteria.map((c,i)=>`<div class="eval-row"><div class="eval-criterion">${i+1}. ${esc(c)}</div>${[4,3,2,1].map(v=>`<button type="button" class="eval-choice" data-inline-criterion="${i+1}" data-inline-value="${v}" onclick="selectInlineAchievementEval(${i+1},${v},this)">${achievementEvalLabels[v]}</button>`).join('')}</div>`).join('');
+  const phrases=document.getElementById('inlineEvalPhraseChoices');
+  if(phrases)phrases.innerHTML=[4,3,2,1].map(v=>`<button type="button" class="eval-phrase-choice" data-phrase-value="${v}" onclick="selectInlineEvalPhrase(${v},this)">${esc(achievementEvalFinalPhrases[v])}</button>`).join('');
+  updateInlineAchievementEvalSummary();
+}
+function selectInlineAchievementEval(index,value,btn){
+  inlineAchievementEval.values[index]=value;
+  const row=btn.closest('.eval-row');row?.querySelectorAll('.eval-choice').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');updateInlineAchievementEvalSummary();
+}
+function selectInlineEvalPhrase(value,btn){
+  inlineAchievementEval.phraseValue=value;
+  document.querySelectorAll('#inlineEvalPhraseChoices .eval-phrase-choice').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');
+}
+function updateInlineAchievementEvalSummary(){
+  const vals=Object.values(inlineAchievementEval.values||{});const rawTotal=vals.reduce((a,b)=>a+Number(b||0),0);const total20=rawTotal/2;const count=vals.length;
+  const t=document.getElementById('inlineEvalTotal'),o=document.getElementById('inlineEvalOverall');if(t)t.textContent=`${total20} / 20`;if(o)o.textContent=count===10?achievementOverall(total20):'—';
+}
+async function fetchLatestAchievementPhrase(name,className){
+  let q=sb.from('student_scores').select('*').eq('student_name',name).eq('lesson_id','achievement_eval_phrase').order('created_at',{ascending:false}).limit(1);
+  if(className)q=q.eq('class_name',className);const {data,error}=await q;if(error)throw error;return data?.[0]||null;
+}
+function phraseFromSavedRow(row){
+  if(!row)return {value:0,text:''};const value=Number(row.score||0);const marker=' • العبارة النهائية • ';const title=String(row.lesson_title||'');const text=title.includes(marker)?title.split(marker).slice(1).join(marker):achievementEvalFinalPhrases[value]||'';return {value,text};
+}
+async function loadInlineAchievementEvaluation(name,className){
+  inlineAchievementEval={name,className:className||'',values:{},phraseValue:0};renderInlineAchievementEvaluation();const st=document.getElementById('inlineEvalStatus');if(st)st.textContent='⏳ جارٍ تحميل تقييم الطالبة...';
+  try{
+    const [latest,phraseRow]=await Promise.all([fetchLatestAchievementEvaluation(name,className||null),fetchLatestAchievementPhrase(name,className||null)]);
+    for(let i=1;i<=10;i++){const r=latest[i];if(r){const v=Number(r.score);inlineAchievementEval.values[i]=v;document.querySelector(`#inlineEvalCriteria .eval-choice[data-inline-criterion="${i}"][data-inline-value="${v}"]`)?.classList.add('selected');}}
+    const savedPhrase=phraseFromSavedRow(phraseRow);if(savedPhrase.value){inlineAchievementEval.phraseValue=savedPhrase.value;document.querySelector(`#inlineEvalPhraseChoices .eval-phrase-choice[data-phrase-value="${savedPhrase.value}"]`)?.classList.add('selected');}
+    updateInlineAchievementEvalSummary();if(st)st.textContent=Object.keys(latest).length?'✅ تم تحميل آخر تقييم محفوظ لهذه الطالبة، ويمكنك تعديله ثم حفظه من جديد.':'ابدئي باختيار العبارات المناسبة ثم احفظي التقييم.';
+  }catch(e){console.error(e);if(st)st.textContent='تعذر تحميل التقييم السابق، ويمكنك إدخال تقييم جديد.';}
+}
+async function saveInlineAchievementEvaluation(){
+  const st=document.getElementById('inlineEvalStatus'),btn=document.getElementById('inlineEvalSaveBtn');const {name,className,values,phraseValue}=inlineAchievementEval;
+  if(!name){if(st)st.textContent='تعذر تحديد اسم الطالبة.';return;}if(Object.keys(values||{}).length!==10){if(st)st.textContent='🌷 اختاري عبارة لكل معيار من المعايير العشرة.';return;}if(!phraseValue){if(st)st.textContent='🌷 اختاري عبارة التقييم النهائي.';return;}
+  const rows=achievementEvalCriteria.map((title,i)=>({student_name:name,class_name:className||'غير محدد',lesson_id:`achievement_eval_${i+1}`,lesson_title:`تقييم سجل الإنجاز • ${title}`,score:Number(values[i+1]),total:4}));
+  rows.push({student_name:name,class_name:className||'غير محدد',lesson_id:'achievement_eval_phrase',lesson_title:`تقييم سجل الإنجاز • العبارة النهائية • ${achievementEvalFinalPhrases[phraseValue]}`,score:Number(phraseValue),total:4});
+  if(btn)btn.disabled=true;if(st)st.textContent='⏳ جارٍ حفظ تقييم الطالبة...';
+  try{const {error}=await sb.from('student_scores').insert(rows);if(error)throw error;const total20=Object.values(values).reduce((a,b)=>a+Number(b||0),0)/2;if(st)st.textContent=`✅ تم حفظ تقييم ${name} بنجاح — ${total20}/20 — ${achievementOverall(total20)}`;}
+  catch(e){console.error(e);if(st)st.textContent='❌ تعذر حفظ التقييم الآن.';}finally{if(btn)btn.disabled=false;}
 }
 
 const studentNamesByClass = {
