@@ -128,6 +128,7 @@ summary::-webkit-details-marker{display:none}
 <div><span class="student-badge" id="welcomeClass"></span></div>
 <p>تم تسجيل دخولك بنجاح. يمكنك الآن البدء بالدروس والاختبارات.</p>
 <button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button>
+<button class="login-submit" style="margin-top:10px;background:#f4eaff" type="button" onclick="openMyAchievementRecord()">📘 سجل إنجازي</button>
 
 </div>
 </section>
@@ -204,8 +205,9 @@ summary::-webkit-details-marker{display:none}
 <button class="btn" type="button" onclick="showSection('student')">← رجوع</button>
 <div class="hero"><h1>📘 سجل إنجازي</h1><p id="myRecordStudent"></p></div>
 <div class="card">
+  <div class="record-section"><h3>👧 السيرة الذاتية</h3><div id="myBiography" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="myWorksheets" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="myPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام</h3><div id="myPerformance" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="myRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
 </div>
 </section>
@@ -215,8 +217,9 @@ summary::-webkit-details-marker{display:none}
 <button class="btn" type="button" onclick="showSection('gallery')">← رجوع إلى سجلات الإنجاز</button>
 <div class="hero"><h1>📘 سجل إنجاز الطالبة</h1><h2 id="directorRecordName"></h2><p>عرض السجل للمديرة</p></div>
 <div class="card">
+  <div class="record-section"><h3>👧 السيرة الذاتية</h3><div id="directorBiography" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="directorWorksheets" class="record-mini-grid"></div></div>
-  <div class="record-section"><h3>⭐ المهام الأدائية</h3><div id="directorPerformance" class="record-mini-grid"></div></div>
+  <div class="record-section"><h3>⭐ المهام</h3><div id="directorPerformance" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="directorRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
 </div>
 </section>
@@ -242,18 +245,26 @@ summary::-webkit-details-marker{display:none}
 <div id="uploadRecord" class="card teacher-panel"><h2>📘 سجل إنجاز الطالبة</h2>
     <p class="muted">اختاري اسم الطالبة والقسم، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
     <div class="teacher-upload">
-      <input id="recordStudentName" type="text" placeholder="اسم الطالبة">
+      <select id="recordClass" onchange="populateRecordStudents()">
+        <option value="">اختاري الفصل</option>
+        <option value="ثالث/١">ثالث/١</option>
+        <option value="ثالث/٣">ثالث/٣</option>
+      </select>
+      <select id="recordStudentName">
+        <option value="">اختاري الطالبة</option>
+      </select>
       <select id="recordCategory" onchange="handleRecordCategoryChange()">
         <option value="">اختاري القسم</option>
+        <option value="السيرة الذاتية">👧 السيرة الذاتية</option>
         <option value="أوراق العمل">📄 أوراق العمل</option>
-        <option value="المهام الأدائية">⭐ المهام الأدائية</option>
+        <option value="المهام الأدائية">⭐ المهام</option>
         <option value="التقييم">✅ التقييم الإلكتروني</option>
       </select>
       <input id="recordFile" type="file" accept="image/*" multiple>
-      <button id="recordUploadBtn" class="login-submit" onclick="teacherUploadRecordMulti()">+ إضافة الصور إلى سجل الطالبة</button>
+      <button id="recordUploadBtn" class="login-submit" onclick="teacherUploadRecordMulti()">+ إضافة الملفات إلى القسم المحدد</button>
       <div id="recordStatus" class="login-msg"></div>
     </div>
-    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div><div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div>
+    <div id="teacherRecordsList" class="teacher-list" style="margin-top:14px"></div></div>
 
 <div id="recordEvaluation" class="card teacher-panel">
   <h2>✅ التقييم الإلكتروني لسجل الإنجاز</h2>
@@ -322,15 +333,16 @@ async function loadPublicGallery(){
   else if(!ar.data?.length) r.innerHTML='<div class="gallery-item">📘<b>سيتم إضافة سجلات الإنجاز هنا</b></div>';
   else {
     const grouped={};
-    (ar.data||[]).forEach(x=>{const p=parseRecordStudent(x.student_name);(grouped[p.name]=grouped[p.name]||[]).push({...x,_cat:p.category});});
-    r.innerHTML=Object.entries(grouped).map(([name,rows])=>`<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}')"><b style="font-size:18px">${esc(name)}</b><div class="muted">${rows.length} صورة في سجل الإنجاز — اضغطي لفتح السجل كاملًا</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`).join('');
+    (ar.data||[]).forEach(x=>{const p=parseRecordStudent(x.student_name);const key=(p.className||'')+'|||'+p.name;(grouped[key]=grouped[key]||[]).push({...x,_cat:p.category,_class:p.className,_name:p.name});});
+    r.innerHTML=Object.values(grouped).map(rows=>{const name=rows[0]._name||'';const cls=rows[0]._class||'';return `<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}','${encodeURIComponent(cls)}')"><b style="font-size:18px">${esc(name)}</b>${cls?`<span class="student-badge">${esc(cls)}</span>`:''}<div class="muted">${rows.length} ملف في سجل الإنجاز — اضغطي لفتح السجل كاملًا</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`}).join('');
   }
 }
 
-function encodeRecordStudent(name,category){return name+'|||'+category;}
+function encodeRecordStudent(name,category,className){return (className||'')+'|||'+name+'|||'+category;}
 function parseRecordStudent(v){
   const parts=String(v||'').split('|||');
-  return {name:parts[0]||'',category:parts[1]||'عام'};
+  if(parts.length>=3) return {className:parts[0]||'',name:parts[1]||'',category:parts.slice(2).join('|||')||'عام'};
+  return {className:'',name:parts[0]||'',category:parts[1]||'عام'};
 }
 function handleRecordCategoryChange(){
   const category=document.getElementById('recordCategory')?.value||'';
@@ -351,11 +363,13 @@ function handleRecordCategoryChange(){
 
 async function teacherUploadRecordMulti(){
   const status=document.getElementById('recordStatus');
-  const name=document.getElementById('recordStudentName').value.trim();
+  const className=document.getElementById('recordClass')?.value||'';
+  const name=document.getElementById('recordStudentName')?.value||'';
   const category=document.getElementById('recordCategory').value;
   const files=Array.from(document.getElementById('recordFile').files||[]);
   status.style.display='block';
-  if(!name){status.textContent='🌷 اكتبي اسم الطالبة.';return;}
+  if(!className){status.textContent='🌷 اختاري الفصل أولًا.';return;}
+  if(!name){status.textContent='🌷 اختاري الطالبة.';return;}
   if(!category){status.textContent='🌷 اختاري قسم سجل الإنجاز.';return;}
   if(category==='التقييم'){showTeacherTab('recordEvaluation');status.textContent='✅ استخدمي نموذج التقييم الإلكتروني.';return;}
   if(!files.length){status.textContent='🌷 اختاري صورة واحدة أو أكثر.';return;}
@@ -365,7 +379,7 @@ async function teacherUploadRecordMulti(){
     for(const file of files){
       const fd=new FormData();
       fd.set('action','upload_record');
-      fd.set('student_name',encodeRecordStudent(name,category));
+      fd.set('student_name',encodeRecordStudent(name,category,className));
       fd.set('file',file);
       await teacherApi(fd,true);
       done++;
@@ -378,30 +392,50 @@ async function teacherUploadRecordMulti(){
   }catch(e){status.textContent='❌ '+e.message;}
 }
 
-async function openDirectorRecord(nameEncoded){
+async function openDirectorRecord(nameEncoded,classEncoded=''){
   if(!(visitorMode || !!teacherPass())){ showSection('home'); return; }
   const name=decodeURIComponent(nameEncoded);
+  const className=decodeURIComponent(classEncoded||'');
   showSection('directorRecord');
-  document.getElementById('directorRecordName').textContent=name;
-  loadAchievementEvaluationView(name,null,'directorRecordEvaluation');
-  const boxMap={'أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance'};
-  Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ تحميل الصور...</div>');
+  document.getElementById('directorRecordName').textContent=name+(className?' • '+className:'');
+  loadAchievementEvaluationView(name,className||null,'directorRecordEvaluation');
+  const boxMap={'السيرة الذاتية':'directorBiography','أوراق العمل':'directorWorksheets','المهام الأدائية':'directorPerformance'};
+  Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="loading">جارٍ تحميل الملفات...</div>');
   const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
   if(error){
     Object.values(boxMap).forEach(id=>document.getElementById(id).innerHTML='<div class="muted">تعذر تحميل السجل الآن.</div>');
     return;
   }
   for(const [cat,id] of Object.entries(boxMap)){
-    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===name&&p.category===cat;});
+    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===name&&p.category===cat&&(!className||!p.className||p.className===className);});
     document.getElementById(id).innerHTML=rows.length
       ? rows.map(x=>`<a href="${publicImageUrl(x.image_path)}" target="_blank" rel="noopener"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"></a>`).join('')
-      : '<div class="muted">لا توجد صور مضافة في هذا القسم بعد.</div>';
+      : '<div class="muted">لا توجد ملفات مضافة في هذا القسم بعد.</div>';
   }
 }
 
 async function openMyAchievementRecord(){
-  // سجلات الإنجاز مخصصة للمعلمة والزائر المصرح له فقط.
-  showSection('student');
+  let student=null;
+  try{student=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+  if(!student?.name){showSection('student');return;}
+  showSection('myRecord');
+  const title=document.getElementById('myRecordStudent');
+  if(title)title.textContent=student.name+' • '+student.className;
+  loadAchievementEvaluationView(student.name,student.className,'myRecordEvaluation');
+  const boxMap={'السيرة الذاتية':'myBiography','أوراق العمل':'myWorksheets','المهام الأدائية':'myPerformance'};
+  Object.values(boxMap).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="loading">جارٍ تحميل الملفات...</div>';});
+  const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
+  if(error){
+    Object.values(boxMap).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="muted">تعذر تحميل السجل الآن.</div>';});
+    return;
+  }
+  for(const [cat,id] of Object.entries(boxMap)){
+    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===student.name&&p.category===cat&&(!p.className||p.className===student.className);});
+    const el=document.getElementById(id);if(!el)continue;
+    el.innerHTML=rows.length
+      ? rows.map(x=>`<a href="${publicImageUrl(x.image_path)}" target="_blank" rel="noopener"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"></a>`).join('')
+      : '<div class="muted">لا توجد ملفات مضافة في هذا القسم بعد.</div>';
+  }
 }
 
 function teacherPass(){return sessionStorage.getItem('itqanTeacherPass')||'';}
@@ -440,7 +474,7 @@ async function loadTeacherGalleryLists(){
   if(!teacherPass())return; const [fw,ar]=await Promise.all([sb.from('featured_works').select('*').order('created_at',{ascending:false}),sb.from('achievement_records').select('*').order('created_at',{ascending:false})]);
   const fl=document.getElementById('teacherFeaturedList'),rl=document.getElementById('teacherRecordsList');
   if(fl) fl.innerHTML=fw.data?.length?fw.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> — ${esc(x.lesson_title)}<img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('featured',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد أعمال مضافة بعد.</div>';
-  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>{const p=parseRecordStudent(x.student_name);return `<div class="teacher-row"><b>${esc(p.name)}</b> <span class="student-badge">${esc(p.category)}</span><img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`}).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
+  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>{const p=parseRecordStudent(x.student_name);return `<div class="teacher-row"><b>${esc(p.name)}</b> ${p.className?`<span class="student-badge">${esc(p.className)}</span>`:''} <span class="student-badge">${esc(p.category)}</span><img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`}).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
 }
 async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='featured'?'delete_featured':'delete_record',id});await loadTeacherGalleryLists();await loadPublicGallery();}catch(e){alert(e.message);}}
 async function loadTeacherPrivateData(){
@@ -522,8 +556,12 @@ function showVisitorStar(){
 }
 
 function showSection(id){
-  // منع الوصول لسجلات الإنجاز دون صلاحية زائر/معلمة
-  if((id==='directorRecord'||id==='myRecord') && !(visitorMode || !!teacherPass())) id='home';
+  // سجل المديرة للزائر/المعلمة، وسجل الطالبة للطالبة المسجلة فقط
+  if(id==='directorRecord' && !(visitorMode || !!teacherPass())) id='home';
+  if(id==='myRecord'){
+    let st=null;try{st=JSON.parse(localStorage.getItem('itqanStudent')||'null')}catch(e){}
+    if(!st?.name) id='student';
+  }
 
   document.querySelectorAll('main > section').forEach(s=>s.style.display='none');
   const target=document.getElementById(id);
@@ -683,13 +721,10 @@ async function renderStarStatus(){
 const achievementEvalCriteria = [
   'تنظيم السجل وترتيبه',
   'جمال الغلاف ونظافته',
-  'وضوح الفواصل بين الأقسام',
   'اكتمال السيرة الذاتية',
   'اكتمال أوراق العمل',
-  'اكتمال المهمات الأدائية',
-  'اكتمال الاختبارات',
-  'إرفاق نماذج من أعمال الطالبة',
-  'جودة التنسيق والترتيب العام',
+  'اكتمال المهام',
+    'جودة التنسيق والترتيب العام',
   'الالتزام بتعليمات السجل'
 ];
 const achievementEvalLabels={4:'ممتاز',3:'جيد جداً',2:'جيد',1:'يحتاج إلى تحسين'};
@@ -706,10 +741,10 @@ function selectAchievementEval(index,value,btn){
 }
 function updateAchievementEvalSummary(){
   const rawTotal=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b||0),0);
-  const total20=rawTotal/2;
+  const total20=achievementEvalCriteria.length?((rawTotal/(achievementEvalCriteria.length*4))*20):0;
   const count=Object.keys(achievementEvalValues).length;
   const t=document.getElementById('recordEvalTotal'),o=document.getElementById('recordEvalOverall');
-  if(t)t.textContent=`${total20} / 20`;if(o)o.textContent=count===10?achievementOverall(total20):'—';
+  if(t)t.textContent=`${Number(total20.toFixed(1))} / 20`;if(o)o.textContent=count===achievementEvalCriteria.length?achievementOverall(total20):'—';
 }
 function populateEvalStudents(){
   const cls=document.getElementById('evalClass')?.value||'';const sel=document.getElementById('evalStudent');if(!sel)return;
@@ -722,46 +757,50 @@ async function fetchLatestAchievementEvaluation(name,className){
   let q=sb.from('student_scores').select('*').eq('student_name',name).like('lesson_id','achievement_eval_%').order('created_at',{ascending:false});
   if(className)q=q.eq('class_name',className);
   const {data,error}=await q;if(error)throw error;
-  const latest={};for(const r of (data||[])){const m=String(r.lesson_id||'').match(/^achievement_eval_(\d+)$/);if(m&&!latest[m[1]])latest[m[1]]=r;}
+  const latest={};
+  for(const r of (data||[])){
+    const title=String(r.lesson_title||'').replace(/^تقييم سجل الإنجاز • /,'');
+    const idx=achievementEvalCriteria.indexOf(title);
+    if(idx>=0&&!latest[idx+1])latest[idx+1]=r;
+  }
   return latest;
 }
 async function loadExistingEvaluationForTeacher(){
   const cls=document.getElementById('evalClass')?.value||'',name=document.getElementById('evalStudent')?.value||'';renderAchievementEvaluationForm();if(!cls||!name)return;
   const st=document.getElementById('recordEvalStatus');if(st)st.textContent='⏳ جارٍ تحميل التقييم السابق...';
   try{const latest=await fetchLatestAchievementEvaluation(name,cls);achievementEvalValues={};
-    for(let i=1;i<=10;i++){const r=latest[i];if(r){achievementEvalValues[i]=Number(r.score);const btn=document.querySelector(`#recordEvalCriteria .eval-choice[data-criterion="${i}"][data-value="${Number(r.score)}"]`);btn?.classList.add('selected');}}
+    for(let i=1;i<=achievementEvalCriteria.length;i++){const r=latest[i];if(r){achievementEvalValues[i]=Number(r.score);const btn=document.querySelector(`#recordEvalCriteria .eval-choice[data-criterion="${i}"][data-value="${Number(r.score)}"]`);btn?.classList.add('selected');}}
     updateAchievementEvalSummary();if(st)st.textContent=Object.keys(latest).length?'✅ تم تحميل آخر تقييم محفوظ.':'لا يوجد تقييم سابق لهذه الطالبة.';
   }catch(e){if(st)st.textContent='تعذر تحميل التقييم السابق.';console.error(e)}
 }
 async function saveAchievementEvaluation(){
   const cls=document.getElementById('evalClass')?.value||'',name=document.getElementById('evalStudent')?.value||'',st=document.getElementById('recordEvalStatus'),btn=document.getElementById('recordEvalSaveBtn');
   if(!cls||!name){if(st)st.textContent='🌷 اختاري الفصل والطالبة أولًا.';return;}
-  if(Object.keys(achievementEvalValues).length!==10){if(st)st.textContent='🌷 قيّمي المعايير العشرة كلها قبل الحفظ.';return;}
+  if(Object.keys(achievementEvalValues).length!==achievementEvalCriteria.length){if(st)st.textContent=`🌷 قيّمي المعايير ${achievementEvalCriteria.length} كلها قبل الحفظ.`;return;}
   const rows=achievementEvalCriteria.map((title,i)=>({student_name:name,class_name:cls,lesson_id:`achievement_eval_${i+1}`,lesson_title:`تقييم سجل الإنجاز • ${title}`,score:Number(achievementEvalValues[i+1]),total:4}));
   if(btn)btn.disabled=true;if(st)st.textContent='⏳ جارٍ حفظ التقييم...';
-  try{const {error}=await sb.from('student_scores').insert(rows);if(error)throw error;const rawTotal=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b),0);const total20=rawTotal/2;if(st)st.textContent=`✅ تم حفظ التقييم: ${total20}/20 — ${achievementOverall(total20)}`;}
+  try{const {error}=await sb.from('student_scores').insert(rows);if(error)throw error;const rawTotal=Object.values(achievementEvalValues).reduce((a,b)=>a+Number(b),0);const total20=(rawTotal/(achievementEvalCriteria.length*4))*20;if(st)st.textContent=`✅ تم حفظ التقييم: ${Number(total20.toFixed(1))}/20 — ${achievementOverall(total20)}`;}
   catch(e){console.error(e);if(st)st.textContent='❌ تعذر حفظ التقييم الآن.';}finally{if(btn)btn.disabled=false;}
 }
 async function loadAchievementEvaluationView(name,className,targetId){
   const el=document.getElementById(targetId);if(!el)return;el.innerHTML='<div class="loading">جارٍ تحميل التقييم...</div>';
   try{const latest=await fetchLatestAchievementEvaluation(name,className);const keys=Object.keys(latest);if(!keys.length){el.innerHTML='<div class="muted">لم يتم إضافة تقييم للسجل بعد.</div>';return;}
-    let total=0,count=0,rows='';for(let i=1;i<=10;i++){const r=latest[i];if(!r)continue;const v=Number(r.score||0);total+=v;count++;rows+=`<div class="eval-view-row"><span>${i}. ${esc(achievementEvalCriteria[i-1])}</span><span class="eval-view-badge">${achievementEvalLabels[v]||v}</span></div>`;}
-    const total20=total/2;
+    let total=0,count=0,rows='';for(let i=1;i<=achievementEvalCriteria.length;i++){const r=latest[i];if(!r)continue;const v=Number(r.score||0);total+=v;count++;rows+=`<div class="eval-view-row"><span>${i}. ${esc(achievementEvalCriteria[i-1])}</span><span class="eval-view-badge">${achievementEvalLabels[v]||v}</span></div>`;}
     const normalized20=count?((total/(count*4))*20):0;
-    const overall=achievementOverall(count===10?total20:normalized20);
-    el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${count===10?total20+'/20':total20+'/'+(count*2)}</span><span>${esc(overall)}</span></div>`;
+    const overall=achievementOverall(normalized20);
+    el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${Number(normalized20.toFixed(1))}/20</span><span>${esc(overall)}</span></div>`;
   }catch(e){console.error(e);el.innerHTML='<div class="muted">تعذر تحميل تقييم السجل الآن.</div>';}
 }
 
 const studentNamesByClass = {
   'ثالث/١': [
     'أبرار عبدالله حامد الزهراني','أبرار عزيز شريعه الله مياه','أميرة محمد احمد الغامدي','ابتسام سعود أمير حسين',
-    'اسراء محمود الله صادق أحمد','ايلاف عبدالله رزيق الربيعي','جوليا عادل حسن حكمي','حال مطر بن ابراهيم الزهراني',
+    'اسراء محمود الله صادق أحمد','ايلاف عبدالله رزيق الربيعي','جوليا عادل حسن حكمي','حلا مطر بن ابراهيم الزهراني',
     'حور احمد درويش حافظ','دانة ابراهيم ادريس حسن','رند ناصر حامد الصاعدي','رهف محسن محمد عبدالله بصير',
     'روين عبدالفتاح ابراهيم الزهراني','ريتاج نور الأسلام حسن علي آن مين','ريتال عبدربه احمد العميري','ساره طالل منصور الاسمري',
     'سلوى احمد نجم الوارث بتى وارث','سوزان سليم الله حبيب الله','صفاء عثمان حافظ عثمان','غرام عوض سعيد الزبيدي',
     'غصون ابراهيم عطيه الزهراني','غال علي مرضي القرني','غنى علي بن مهدي حدادي','فرح احمد عبدالله المنتشري',
-    'النا محمد مقعد البقمي','لمار علاء قاسم أمين','لنا فيصل بن عجب القحطاني','لورين خالد صديق صديق',
+    'لانا محمد مقعد البقمي','لمار علاء قاسم أمين','لنا فيصل بن عجب القحطاني','لورين خالد صديق صديق',
     'لولوه ايمن بكري الصبحى','لينا انور صالح الزبيدي','لينة عبدالله علي الزبيدي','ملك نواف احمد المالكي',
     'همس ابراهيم عبدالله الخثعمي','ود محمد عبدالله العرياني','ورد سلطان محمد الشهري','ورد عبدالله ابراهيم سنيقالى',
     'وريف تركي نافع الناشري'
@@ -778,11 +817,21 @@ const studentNamesByClass = {
     'لتين سعد بن حسن العمري','ملك سعد ابن مطير المالكي','ملك معاذ سالم الزهراني',
     'مينار محمد علي حكمي','ندى فارس علي الزهراني','نوره عبدالله صالح الغامدي','هناي سعد بن نويعم السلمي',
     'ود علي احمد القرني','وهبه صالح حسن علي الدباسي',
-    'غال عبدالله علي القرني',
-    'الرين حسن سودان الزهراني',
-    'ميال خضر عبدالله الزهراني',
+    'غلا عبدالله علي القرني',
+    'لارين حسن سودان الزهراني',
+    'ميلا خضر عبدالله الزهراني',
 ]
 };
+
+function populateRecordStudents(){
+  const className=document.getElementById('recordClass')?.value||'';
+  const nameSelect=document.getElementById('recordStudentName');
+  if(!nameSelect)return;
+  nameSelect.innerHTML='<option value="">اختاري الطالبة</option>';
+  (studentNamesByClass[className]||[]).forEach(name=>{
+    const o=document.createElement('option');o.value=name;o.textContent=name;nameSelect.appendChild(o);
+  });
+}
 
 function populateStudentNames(){
   const className=document.getElementById('studentClass').value;
