@@ -333,7 +333,7 @@ async function loadPublicGallery(){
   else if(!ar.data?.length) r.innerHTML='<div class="gallery-item">📘<b>سيتم إضافة سجلات الإنجاز هنا</b></div>';
   else {
     const grouped={};
-    (ar.data||[]).forEach(x=>{const p=parseRecordStudent(x.student_name);const key=(p.className||'')+'|||'+p.name;(grouped[key]=grouped[key]||[]).push({...x,_cat:p.category,_class:p.className,_name:p.name});});
+    (ar.data||[]).forEach(x=>{const p=recordParts(x);const key=(p.className||'')+'|||'+p.name;(grouped[key]=grouped[key]||[]).push({...x,_cat:p.category,_class:p.className,_name:p.name});});
     r.innerHTML=Object.values(grouped).map(rows=>{const name=rows[0]._name||'';const cls=rows[0]._class||'';return `<button type="button" class="gallery-item navbtn" style="align-items:stretch;text-align:center" onclick="openDirectorRecord('${encodeURIComponent(name)}','${encodeURIComponent(cls)}')"><b style="font-size:18px">${esc(name)}</b>${cls?`<span class="student-badge">${esc(cls)}</span>`:''}<div class="muted">${rows.length} ملف في سجل الإنجاز — اضغطي لفتح السجل كاملًا</div><div class="record-mini-grid" style="margin-top:10px">${rows.slice(0,4).map(x=>`<img src="${publicImageUrl(x.image_path)}" alt="${esc(x._cat)}">`).join('')}</div></button>`}).join('');
   }
 }
@@ -343,6 +343,14 @@ function parseRecordStudent(v){
   const parts=String(v||'').split('|||');
   if(parts.length>=3) return {className:parts[0]||'',name:parts[1]||'',category:parts.slice(2).join('|||')||'عام'};
   return {className:'',name:parts[0]||'',category:parts[1]||'عام'};
+}
+function recordParts(row){
+  const legacy=parseRecordStudent(row?.student_name);
+  return {
+    className:String(row?.class_name||legacy.className||'').trim(),
+    name:String(legacy.name||row?.student_name||'').trim(),
+    category:String(row?.category||legacy.category||'عام').trim()
+  };
 }
 function handleRecordCategoryChange(){
   const category=document.getElementById('recordCategory')?.value||'';
@@ -380,6 +388,8 @@ async function teacherUploadRecordMulti(){
       const fd=new FormData();
       fd.set('action','upload_record');
       fd.set('student_name',encodeRecordStudent(name,category,className));
+      fd.set('class_name',className);
+      fd.set('category',category);
       fd.set('file',file);
       await teacherApi(fd,true);
       done++;
@@ -407,7 +417,7 @@ async function openDirectorRecord(nameEncoded,classEncoded=''){
     return;
   }
   for(const [cat,id] of Object.entries(boxMap)){
-    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===name&&p.category===cat&&(!className||!p.className||p.className===className);});
+    const rows=(data||[]).filter(x=>{const p=recordParts(x);return p.name===name&&p.category===cat&&(!className||!p.className||p.className===className);});
     document.getElementById(id).innerHTML=rows.length
       ? rows.map(x=>`<a href="${publicImageUrl(x.image_path)}" target="_blank" rel="noopener"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"></a>`).join('')
       : '<div class="muted">لا توجد ملفات مضافة في هذا القسم بعد.</div>';
@@ -430,7 +440,7 @@ async function openMyAchievementRecord(){
     return;
   }
   for(const [cat,id] of Object.entries(boxMap)){
-    const rows=(data||[]).filter(x=>{const p=parseRecordStudent(x.student_name);return p.name===student.name&&p.category===cat&&(!p.className||p.className===student.className);});
+    const rows=(data||[]).filter(x=>{const p=recordParts(x);return p.name===student.name&&p.category===cat&&(!p.className||p.className===student.className);});
     const el=document.getElementById(id);if(!el)continue;
     el.innerHTML=rows.length
       ? rows.map(x=>`<a href="${publicImageUrl(x.image_path)}" target="_blank" rel="noopener"><img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}"></a>`).join('')
@@ -471,10 +481,69 @@ async function teacherUpload(type){
   catch(e){status.textContent='❌ '+e.message;}
 }
 async function loadTeacherGalleryLists(){
-  if(!teacherPass())return; const [fw,ar]=await Promise.all([sb.from('featured_works').select('*').order('created_at',{ascending:false}),sb.from('achievement_records').select('*').order('created_at',{ascending:false})]);
-  const fl=document.getElementById('teacherFeaturedList'),rl=document.getElementById('teacherRecordsList');
-  if(fl) fl.innerHTML=fw.data?.length?fw.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> — ${esc(x.lesson_title)}<img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('featured',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد أعمال مضافة بعد.</div>';
-  if(rl) rl.innerHTML=ar.data?.length?ar.data.map(x=>{const p=parseRecordStudent(x.student_name);return `<div class="teacher-row"><b>${esc(p.name)}</b> ${p.className?`<span class="student-badge">${esc(p.className)}</span>`:''} <span class="student-badge">${esc(p.category)}</span><img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('record',${x.id})">حذف</button></div>`}).join(''):'<div class="muted">لا توجد سجلات مضافة بعد.</div>';
+  if(!teacherPass())return;
+  const [fw,ar]=await Promise.all([
+    sb.from('featured_works').select('*').order('created_at',{ascending:false}),
+    sb.from('achievement_records').select('*').order('created_at',{ascending:false})
+  ]);
+  const fl=document.getElementById('teacherFeaturedList'),
+        rl=document.getElementById('teacherRecordsList');
+
+  if(fl){
+    fl.innerHTML=fw.data?.length
+      ? fw.data.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> — ${esc(x.lesson_title)}<img src="${publicImageUrl(x.image_path)}"><button class="danger-btn" onclick="teacherDelete('featured',${x.id})">حذف</button></div>`).join('')
+      : '<div class="muted">لا توجد أعمال مضافة بعد.</div>';
+  }
+
+  if(!rl)return;
+  if(ar.error){
+    rl.innerHTML='<div class="muted">تعذر تحميل سجلات الإنجاز الآن.</div>';
+    return;
+  }
+  if(!ar.data?.length){
+    rl.innerHTML='<div class="muted">لا توجد سجلات مضافة بعد.</div>';
+    return;
+  }
+
+  const grouped={};
+  (ar.data||[]).forEach(row=>{
+    const p=recordParts(row);
+    const key=(p.className||'')+'|||'+p.name;
+    if(!grouped[key]) grouped[key]={name:p.name,className:p.className,rows:[]};
+    grouped[key].rows.push({...row,_category:p.category});
+  });
+
+  const categories=[
+    ['السيرة الذاتية','👧 السيرة الذاتية'],
+    ['أوراق العمل','📄 أوراق العمل'],
+    ['المهام الأدائية','⭐ المهام']
+  ];
+
+  rl.innerHTML=Object.values(grouped).map(group=>{
+    const sections=categories.map(([cat,title])=>{
+      const rows=group.rows.filter(x=>x._category===cat);
+      const content=rows.length
+        ? `<div class="record-mini-grid">${rows.map(x=>`
+            <div style="position:relative">
+              <a href="${publicImageUrl(x.image_path)}" target="_blank" rel="noopener">
+                <img src="${publicImageUrl(x.image_path)}" alt="${esc(cat)}">
+              </a>
+              <button class="danger-btn" style="width:100%;margin-top:6px" onclick="teacherDelete('record',${x.id})">حذف</button>
+            </div>`).join('')}</div>`
+        : '<div class="muted">لا توجد ملفات في هذا القسم بعد.</div>';
+      return `<div class="record-section">
+        <h3>${title} <span class="student-badge">${rows.length}</span></h3>
+        ${content}
+      </div>`;
+    }).join('');
+
+    return `<div class="record-student">
+      <div class="record-student-title">📘 سجل ${esc(group.name)}</div>
+      ${group.className?`<span class="student-badge">${esc(group.className)}</span>`:''}
+      ${sections}
+      <div class="record-section"><h3>✅ التقييم الإلكتروني</h3><div class="muted">يتم التقييم من تبويب «التقييم الإلكتروني».</div></div>
+    </div>`;
+  }).join('');
 }
 async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='featured'?'delete_featured':'delete_record',id});await loadTeacherGalleryLists();await loadPublicGallery();}catch(e){alert(e.message);}}
 async function loadTeacherPrivateData(){
