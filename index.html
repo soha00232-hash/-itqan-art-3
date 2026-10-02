@@ -209,6 +209,7 @@ summary::-webkit-details-marker{display:none}
   <div class="record-section"><h3>📄 أوراق العمل</h3><div id="myWorksheets" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>⭐ المهام</h3><div id="myPerformance" class="record-mini-grid"></div></div>
   <div class="record-section"><h3>✅ تقييم سجل الإنجاز</h3><div id="myRecordEvaluation" class="eval-view"><div class="muted">لم يتم إضافة تقييم بعد.</div></div></div>
+  <div class="record-section"><h3>🤝 تغذية راجعة للأسرة</h3><div id="myFamilyFeedback" class="eval-view"><div class="muted">لا توجد تغذية راجعة للأسرة بعد.</div></div></div>
 </div>
 </section>
 
@@ -238,6 +239,7 @@ summary::-webkit-details-marker{display:none}
 <button class="teacher-tab" onclick="showTeacherTab('uploadWork')">🌟 عمل متميز</button>
 <button class="teacher-tab" onclick="showTeacherTab('uploadRecord')">📘 سجل إنجاز</button>
 <button class="teacher-tab" onclick="showTeacherTab('recordEvaluation')">✅ التقييم الإلكتروني</button>
+<button class="teacher-tab" onclick="showTeacherTab('feedback')">🤝 تغذية راجعة للأسرة</button>
 <button class="teacher-tab" onclick="showTeacherTab('scores')">📊 الدرجات</button>
 <button class="teacher-tab" onclick="showTeacherTab('family')">🤝 مشاركات الأسرة</button>
 </div>
@@ -280,6 +282,31 @@ summary::-webkit-details-marker{display:none}
     <button id="recordEvalSaveBtn" class="eval-save" type="button" onclick="saveAchievementEvaluation()">حفظ التقييم</button>
   </div>
   <div id="recordEvalStatus" class="eval-status"></div>
+</div>
+<div id="feedback" class="card teacher-panel">
+  <h2>🤝 تغذية راجعة للأسرة</h2>
+  <p class="muted">اختاري الطالبة، ثم اختاري عبارة جاهزة أو اكتبي ملاحظة خاصة لأسرتها بعد إكمال المهمة.</p>
+  <div class="eval-toolbar">
+    <select id="feedbackClass" onchange="populateFeedbackStudents()">
+      <option value="">اختاري الفصل</option>
+      <option value="ثالث/١">ثالث/١</option>
+      <option value="ثالث/٣">ثالث/٣</option>
+    </select>
+    <select id="feedbackStudent"><option value="">اختاري الطالبة</option></select>
+  </div>
+  <div class="teacher-upload" style="margin-top:12px">
+    <select id="feedbackQuick" onchange="applyQuickFeedback()">
+      <option value="">اختاري عبارة جاهزة</option>
+      <option>أحسنتِ، تم إنجاز المهمة بإتقان وترتيب جميل.</option>
+      <option>عمل مميز، واصلي هذا المستوى الرائع.</option>
+      <option>تقدم ملحوظ، ومع مزيد من العناية بالتفاصيل سيصبح العمل أجمل.</option>
+      <option>تم إنجاز المهمة بنجاح، شكرًا لأسرة الطالبة على المتابعة والدعم.</option>
+      <option>شكرًا للأسرة على المشاركة الفاعلة ودعم تعلم الطالبة.</option>
+    </select>
+    <textarea id="feedbackText" rows="4" placeholder="اكتبي التغذية الراجعة هنا..." style="width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:14px;padding:12px;font-family:inherit;font-size:15px"></textarea>
+    <button class="login-submit" type="button" onclick="saveStudentFeedback()">حفظ التغذية الراجعة</button>
+    <div id="feedbackStatus" class="login-msg"></div>
+  </div>
 </div>
 <div id="scores" class="card teacher-panel"><h2>📊 درجات الطالبات</h2><p class="muted">هذه البيانات تظهر لكِ فقط داخل لوحة المعلمة.</p><div id="teacherScoresList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
 <div id="family" class="card teacher-panel"><h2>🤝 مشاركات الأسرة</h2><p class="muted">الصور المرسلة من قسم شراكة الأسرة داخل الدروس.</p><div id="teacherFamilyList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
@@ -432,6 +459,7 @@ async function openMyAchievementRecord(){
   const title=document.getElementById('myRecordStudent');
   if(title)title.textContent=student.name+' • '+student.className;
   loadAchievementEvaluationView(student.name,student.className,'myRecordEvaluation');
+  loadFamilyFeedbackView(student.name,student.className);
   const boxMap={'السيرة الذاتية':'myBiography','أوراق العمل':'myWorksheets','المهام الأدائية':'myPerformance'};
   Object.values(boxMap).forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="loading">جارٍ تحميل الملفات...</div>';});
   const {data,error}=await sb.from('achievement_records').select('*').order('created_at',{ascending:false});
@@ -549,7 +577,7 @@ async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))ret
 async function loadTeacherPrivateData(){
   if(!teacherPass())return; const s=document.getElementById('teacherScoresList'),f=document.getElementById('teacherFamilyList'); if(s)s.innerHTML='<div class="loading">جارٍ التحميل...</div>';if(f)f.innerHTML='<div class="loading">جارٍ التحميل...</div>';
   try{const d=await teacherApi({action:'list_teacher'});
-    if(s){const normalScores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_'));s.innerHTML=normalScores.length?normalScores.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> <span class="student-badge">${esc(x.class_name)}</span><div>${esc(x.lesson_title)} — <b>${x.score}/${x.total}</b></div><div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><button class="danger-btn" onclick="teacherDeletePrivate('score',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد درجات محفوظة بعد.</div>';}
+    if(s){const normalScores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_')&&!String(x.lesson_id||'').startsWith('feedback_'));s.innerHTML=normalScores.length?normalScores.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> <span class="student-badge">${esc(x.class_name)}</span><div>${esc(x.lesson_title)} — <b>${x.score}/${x.total}</b></div><div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><button class="danger-btn" onclick="teacherDeletePrivate('score',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد درجات محفوظة بعد.</div>';}
     if(f)f.innerHTML=d.family?.length?d.family.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b><div>${esc(x.lesson_title)}</div>${x.signed_url?`<img src="${x.signed_url}" alt="مشاركة الأسرة">`:''}<div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="promoteFamily(this,'${encodeURIComponent(x.student_name)}','${encodeURIComponent(x.lesson_title)}','${encodeURIComponent(x.signed_url||'')}')">⭐ اعرضي في المنصة</button><button class="danger-btn" onclick="teacherDeletePrivate('family',${x.id})">حذف</button></div></div>`).join(''):'<div class="muted">لا توجد مشاركات أسرة بعد.</div>';
   }catch(e){if(s)s.innerHTML='<div class="muted">'+esc(e.message)+'</div>';if(f)f.innerHTML='<div class="muted">'+esc(e.message)+'</div>';}
 }
@@ -859,6 +887,74 @@ async function loadAchievementEvaluationView(name,className,targetId){
     const overall=achievementOverall(normalized20);
     el.innerHTML=rows+`<div class="eval-overall"><span>النتيجة النهائية: ${Number(normalized20.toFixed(1))}/20</span><span>${esc(overall)}</span></div>`;
   }catch(e){console.error(e);el.innerHTML='<div class="muted">تعذر تحميل تقييم السجل الآن.</div>';}
+}
+
+async function loadFamilyFeedbackView(name,className){
+  const familyEl=document.getElementById('myFamilyFeedback');
+  if(familyEl)familyEl.innerHTML='<div class="loading">جارٍ تحميل التغذية الراجعة...</div>';
+  try{
+    const {data,error}=await sb.from('student_scores')
+      .select('lesson_id,lesson_title,created_at')
+      .eq('student_name',name)
+      .eq('class_name',className)
+      .eq('lesson_id','feedback_family')
+      .order('created_at',{ascending:false})
+      .limit(1);
+    if(error)throw error;
+    const row=(data||[])[0];
+    if(!familyEl)return;
+    familyEl.innerHTML=row
+      ? `<div class="box" style="background:#fff8fc"><b>🌷 رسالة المعلمة للأسرة</b><div style="margin-top:8px;line-height:1.9">${esc(row.lesson_title||'')}</div><div class="muted" style="margin-top:8px">${new Date(row.created_at).toLocaleDateString('ar-SA')}</div></div>`
+      : '<div class="muted">لا توجد تغذية راجعة للأسرة بعد.</div>';
+  }catch(e){
+    console.error(e);
+    if(familyEl)familyEl.innerHTML='<div class="muted">تعذر تحميل التغذية الراجعة الآن.</div>';
+  }
+}
+
+function populateFeedbackStudents(){
+  const cls=document.getElementById('feedbackClass')?.value||'';
+  const sel=document.getElementById('feedbackStudent');
+  if(!sel)return;
+  sel.innerHTML='<option value="">اختاري الطالبة</option>';
+  (studentNamesByClass[cls]||[]).forEach(name=>{
+    const o=document.createElement('option');
+    o.value=name;o.textContent=name;sel.appendChild(o);
+  });
+}
+
+function applyQuickFeedback(){
+  const quick=document.getElementById('feedbackQuick')?.value||'';
+  const textEl=document.getElementById('feedbackText');
+  if(textEl&&quick)textEl.value=quick;
+}
+
+async function saveStudentFeedback(){
+  const cls=document.getElementById('feedbackClass')?.value||'';
+  const name=document.getElementById('feedbackStudent')?.value||'';
+  const textVal=(document.getElementById('feedbackText')?.value||'').trim();
+  const st=document.getElementById('feedbackStatus');
+  if(st)st.style.display='block';
+  if(!cls||!name){if(st)st.textContent='🌷 اختاري الفصل والطالبة أولًا.';return;}
+  if(!textVal){if(st)st.textContent='🌷 اختاري عبارة أو اكتبي تغذية راجعة.';return;}
+  if(st)st.textContent='⏳ جارٍ حفظ التغذية الراجعة...';
+  try{
+    const {error}=await sb.from('student_scores').insert({
+      student_name:name,
+      class_name:cls,
+      lesson_id:'feedback_family',
+      lesson_title:textVal,
+      score:0,
+      total:0
+    });
+    if(error)throw error;
+    if(st)st.textContent='✅ تم حفظ التغذية الراجعة للأسرة.';
+    const textEl=document.getElementById('feedbackText');if(textEl)textEl.value='';
+    const quick=document.getElementById('feedbackQuick');if(quick)quick.value='';
+  }catch(e){
+    console.error(e);
+    if(st)st.textContent='❌ تعذر حفظ التغذية الراجعة الآن.';
+  }
 }
 
 const studentNamesByClass = {
