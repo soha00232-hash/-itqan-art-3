@@ -129,6 +129,7 @@ summary::-webkit-details-marker{display:none}
 <p>تم تسجيل دخولك بنجاح. يمكنك الآن البدء بالدروس والاختبارات.</p>
 <button class="login-submit" type="button" onclick="showSection('lessons')">ابدئي الدروس 📚</button>
 <button class="login-submit" style="margin-top:10px;background:#f4eaff" type="button" onclick="openMyAchievementRecord()">📘 سجل إنجازي</button>
+<button class="logout-btn" style="margin-top:12px" type="button" onclick="studentLogout()">تبديل الطالبة / خروج</button>
 
 </div>
 </section>
@@ -586,6 +587,9 @@ async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))ret
 function renderTeacherProgress(scores){
   const box=document.getElementById('teacherProgressSummary'); if(!box)return;
   const students=new Map();
+  Object.entries(studentNamesByClass).forEach(([className,names])=>{
+    names.forEach(name=>students.set(name+'|'+className,{name,className,lessons:new Map()}));
+  });
   (scores||[]).forEach(x=>{
     const studentKey=String(x.student_name||'').trim()+'|'+String(x.class_name||'').trim();
     if(!String(x.student_name||'').trim())return;
@@ -594,16 +598,16 @@ function renderTeacherProgress(scores){
     const previous=st.lessons.get(lessonKey);
     if(!previous||new Date(x.created_at||0)>=new Date(previous.created_at||0))st.lessons.set(lessonKey,x);
   });
-  const rows=[...students.values()].sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
-  if(!rows.length){box.innerHTML='<div class="muted">لا يوجد تقدم مسجل بعد. على الطالبة إكمال الاختبار والضغط على «إظهار الدرجة»، ثم اضغطي «تحديث البيانات».</div>';return;}
+  const rows=[...students.values()].sort((a,b)=>String(a.className).localeCompare(String(b.className),'ar')||String(a.name).localeCompare(String(b.name),'ar'));
+  const withScores=rows.filter(st=>st.lessons.size>0).length;
   const body=rows.map(st=>{
     const records=[...st.lessons.values()];
     const earned=records.reduce((n,x)=>n+(Number(x.score)||0),0), possible=records.reduce((n,x)=>n+(Number(x.total)||0),0);
-    const percent=possible?Math.round(earned*100/possible):0;
-    const grades=records.map(x=>esc(x.lesson_title||lessonTitles[x.lesson_id]||x.lesson_id)+' '+(Number(x.score)||0)+'/'+(Number(x.total)||0)).join('، ');
-    return '<tr><td><b>'+esc(st.name)+'</b><div class="muted">'+esc(st.className)+'</div></td><td>'+records.length+'</td><td>'+earned+'/'+possible+'</td><td>'+percent+'%</td><td>'+grades+'</td></tr>';
+    const percent=possible?Math.round(earned*100/possible):null;
+    const grades=records.length?records.map(x=>esc(x.lesson_title||lessonTitles[x.lesson_id]||x.lesson_id)+' '+(Number(x.score)||0)+'/'+(Number(x.total)||0)).join('، '):'<span class="muted">لم تسجل اختبارات بعد</span>';
+    return '<tr><td><b>'+esc(st.name)+'</b><div class="muted">'+esc(st.className)+'</div></td><td>'+records.length+'</td><td>'+(possible?earned+'/'+possible:'—')+'</td><td>'+(percent===null?'—':percent+'%')+'</td><td>'+grades+'</td></tr>';
   }).join('');
-  box.innerHTML='<div class="muted">عدد المستفيدات المسجلات: <b>'+rows.length+'</b> · يعرض الملخص أحدث درجة لكل اختبار.</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-top:10px;text-align:right"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>الدرجات</th><th>نسبة الإنجاز</th><th>تفصيل الدرجات</th></tr></thead><tbody>'+body+'</tbody></table></div>';
+  box.innerHTML='<div class="muted">إجمالي الطالبات في القوائم: <b>'+rows.length+'</b> · عدد الطالبات اللاتي لديهن درجات: <b>'+withScores+'</b> · يعرض الملخص أحدث درجة لكل اختبار.</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-top:10px;text-align:right"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>الدرجات</th><th>نسبة الإنجاز</th><th>تفصيل الدرجات</th></tr></thead><tbody>'+body+'</tbody></table></div>';
 }
 async function loadTeacherPrivateData(){
   if(!teacherPass())return;
