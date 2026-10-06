@@ -688,7 +688,20 @@ function showVisitorStar(){
   showSection('star');
 }
 
+function hasPlatformAccess(){
+  if(visitorAuthorized() || !!teacherPass())return true;
+  const {student}=getCurrentStudentRecord();
+  if(!student)return false;
+  return (studentNamesByClass[student.className]||[]).includes(student.name);
+}
 function showSection(id){
+  // تبقى صفحات البداية وتسجيل الدخول متاحة، وتحتاج بقية أقسام المنصة إلى جلسة دخول.
+  const publicEntrySections=['home','student','manager','teacher'];
+  if(!publicEntrySections.includes(id) && !hasPlatformAccess()){
+    id='student';
+    const msg=document.getElementById('loginMsg');
+    if(msg){msg.style.display='block';msg.textContent='🔒 سجلي دخولك أولًا لفتح أقسام المنصة.';}
+  }
   // سجل المديرة للزائر/المعلمة، وسجل الطالبة للطالبة المسجلة فقط
   if(id==='directorRecord' && !(visitorMode || !!teacherPass())) id='home';
   if(id==='myRecord'){
@@ -1084,5 +1097,5 @@ function studentLogout(){
   renderStudentLogin();
 }
 
-document.addEventListener('DOMContentLoaded',()=>{visitorMode=visitorAuthorized();showSection('home');renderStudentLogin();loadPublicGallery();renderAchievementEvaluationForm();});
+document.addEventListener('DOMContentLoaded',()=>{visitorMode=visitorAuthorized();showSection('home');renderStudentLogin();renderAchievementEvaluationForm();});
 </script></body></html>
