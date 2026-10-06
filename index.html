@@ -138,6 +138,7 @@ summary::-webkit-details-marker{display:none}
 <div class="card"><h2>📚 الدروس والاختبارات</h2><p>اضغطي على بطاقة الدرس لفتحه:</p></div>
 <button class="card lesson-card navbtn" type="button" onclick="showSection('sketch')"><div class="icon">✏️</div><h2>الاسكتش</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
 <button class="card lesson-card navbtn" type="button" onclick="showSection('folk')"><div class="icon">🏺</div><h2>الزخرفة البدائية والشعبية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
+<button class="card lesson-card navbtn" type="button" onclick="showSection('folkSaudi')"><div class="icon">🇸🇦</div><h2>الزخرفة الشعبية السعودية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
 <button class="card lesson-card navbtn" type="button" onclick="showSection('textures')"><div class="icon">🖌️</div><h2>تكوينات وملامس مطبوعة</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
 <button class="card lesson-card navbtn" type="button" onclick="showSection('geometry')"><div class="icon">🔷</div><h2>أطبع بوحداتي الهندسية</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
 <button class="card lesson-card navbtn" type="button" onclick="showSection('surfaceprints')"><div class="icon">🧽</div><h2>طباعة وحدات ذات ملامس مختلفة</h2><p>اضغطي هنا لفتح الدرس</p><span class="btn">ابدئي الدرس 🎨</span></button>
@@ -159,6 +160,14 @@ summary::-webkit-details-marker{display:none}
 <div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">ابحثي مع أسرتك عن مثال لزخرفة شعبية سعودية أو كوّني زخرفة بسيطة بالنقطة والخط، ثم أضيفي صورة للمشاركة.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-folk" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-folk" type="file" accept="image/*" onchange="previewFamily(this,'folk')"><img id="familyPreview-folk" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('folk','الزخرفة البدائية والشعبية')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-folk" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div></div>
 <div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: من مكونات الزخرفة البدائية:</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,true)">النقطة</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,false)">الظل</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',1,false)">المنظور</button><div id="folk-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: أين يمكن أن نشاهد الزخرفة الشعبية السعودية؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,true)">في البيوت والأبواب والمنسوجات والحرف التقليدية</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,false)">في الأجهزة الإلكترونية فقط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folk',2,false)">في الخرائط فقط</button><div id="folk-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('folk')">إظهار الدرجة</button><div id="folk-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
 </section>
+<section id="folkSaudi" class="section">
+<button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
+<div class="hero"><h1>🇸🇦 الزخرفة الشعبية السعودية</h1><p>نتعرف على الزخارف التي نراها في تراث مناطق المملكة ونستلهم منها تصميمًا بسيطًا.</p></div>
+<div class="card"><h2>🎯 الهدف</h2><div class="box">أن تتعرف الطالبة على أمثلة من الزخرفة الشعبية السعودية وتبتكر وحدة زخرفية مستوحاة من التراث.</div><h2>💡 فكرة الدرس</h2><p>تظهر الزخارف الشعبية في الأبواب والمنسوجات والأدوات التراثية. وتتنوع الأشكال والألوان من منطقة إلى أخرى، وقد نرى الخطوط والنقاط والأشكال الهندسية متكررة في تكوين جميل.</p><h2>🎨 نشاط فني</h2><div class="box">اختاري شكلًا بسيطًا من البيئة أو التراث، وكرريه مع الخطوط والنقاط لتكوين وحدة زخرفية. استخدمي ألوانًا متناسقة من اختيارك.</div></div>
+<div class="card family-card"><h2>🤝 شراكة الأسرة</h2><div class="box">تأملي مع أسرتك زخرفة شعبية سعودية في صورة أو غرض تراثي، ثم صممي وحدة زخرفية مستوحاة منها وأضيفي صورة عملك.</div><div class="login-form"><label><b>اسم الطالبة</b></label><input id="familyName-folkSaudi" type="text" placeholder="اسم الطالبة"><label><b>صورة المشاركة</b></label><input id="familyFile-folkSaudi" type="file" accept="image/*" onchange="previewFamily(this,'folkSaudi')"><img id="familyPreview-folkSaudi" alt="معاينة مشاركة الأسرة" style="display:none;width:100%;max-height:280px;object-fit:contain;margin-top:10px;border-radius:16px"><button type="button" class="login-submit" onclick="submitFamily('folkSaudi','الزخرفة الشعبية السعودية')">إرسال مشاركة الأسرة 🤝</button><div id="familyStatus-folkSaudi" class="login-msg"></div><div class="muted">تصل المشاركة إلى المعلمة أولًا، وهي تختار ما يُعرض في المنصة.</div></div></div>
+<div class="card"><h2>⭐ اختبار الدرس</h2><p><b>السؤال الأول: أين نرى أمثلة للزخرفة الشعبية السعودية؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folkSaudi',1,true)">على الأبواب والمنسوجات والأدوات التراثية</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folkSaudi',1,false)">في الشاشات فقط</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folkSaudi',1,false)">في إشارات المرور فقط</button><div id="folkSaudi-q1msg" class="box" style="display:none"></div><p><b>السؤال الثاني: كيف نصنع وحدة زخرفية بسيطة؟</b> <span>(درجة واحدة)</span></p><button type="button" class="choice" onclick="gradeLessonQ(this,'folkSaudi',2,true)">نكرر شكلًا أو خطًا وننسق الألوان</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folkSaudi',2,false)">نمسح جميع الأشكال</button><button type="button" class="choice" onclick="gradeLessonQ(this,'folkSaudi',2,false)">نستخدم لونًا عشوائيًا دون ترتيب</button><div id="folkSaudi-q2msg" class="box" style="display:none"></div><button type="button" class="btn" style="width:100%;border:0;font-size:17px" onclick="showLessonScore('folkSaudi')">إظهار الدرجة</button><div id="folkSaudi-scoreBox" class="box" style="display:none;text-align:center;font-weight:700"></div></div>
+</section>
+
 
 <section id="textures" class="section">
 <button class="btn" type="button" onclick="showSection('lessons')">← رجوع للدروس</button>
@@ -243,7 +252,7 @@ summary::-webkit-details-marker{display:none}
 <button class="teacher-tab" onclick="showTeacherTab('scores')">📊 الدرجات</button>
 <button class="teacher-tab" onclick="showTeacherTab('family')">🤝 مشاركات الأسرة</button>
 </div>
-<div id="uploadWork" class="card teacher-panel active"><h2>رفع عمل متميز</h2><div class="teacher-upload"><input id="workStudentName" type="text" placeholder="اسم الطالبة"><select id="workLessonTitle"><option value="">اختاري الدرس</option><option>الاسكتش</option><option>الزخارف الشعبية السعودية</option><option>تكوينات وملامس مطبوعة</option><option>أطبع بوحداتي الهندسية</option><option>طباعة وحدات ذات ملامس مختلفة</option><option>النسيج البسيط الملون</option></select><input id="workFile" type="file" accept="image/*"><button class="login-submit" onclick="teacherUpload('featured')">رفع العمل</button><div id="workStatus" class="login-msg"></div></div><div id="teacherFeaturedList" class="teacher-list" style="margin-top:14px"></div></div>
+<div id="uploadWork" class="card teacher-panel active"><h2>رفع عمل متميز</h2><div class="teacher-upload"><input id="workStudentName" type="text" placeholder="اسم الطالبة"><select id="workLessonTitle"><option value="">اختاري الدرس</option><option>الاسكتش</option><option>الزخارف الشعبية السعودية</option><option>الزخرفة الشعبية السعودية</option><option>تكوينات وملامس مطبوعة</option><option>أطبع بوحداتي الهندسية</option><option>طباعة وحدات ذات ملامس مختلفة</option><option>النسيج البسيط الملون</option></select><input id="workFile" type="file" accept="image/*"><button class="login-submit" onclick="teacherUpload('featured')">رفع العمل</button><div id="workStatus" class="login-msg"></div></div><div id="teacherFeaturedList" class="teacher-list" style="margin-top:14px"></div></div>
 <div id="uploadRecord" class="card teacher-panel"><h2>📘 سجل إنجاز الطالبة</h2>
     <p class="muted">اختاري اسم الطالبة والقسم، ويمكنك اختيار أكثر من صورة في المرة الواحدة.</p>
     <div class="teacher-upload">
@@ -308,7 +317,7 @@ summary::-webkit-details-marker{display:none}
     <div id="feedbackStatus" class="login-msg"></div>
   </div>
 </div>
-<div id="scores" class="card teacher-panel"><h2>📊 درجات الطالبات</h2><p class="muted">هذه البيانات تظهر لكِ فقط داخل لوحة المعلمة.</p><div id="teacherScoresList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
+<div id="scores" class="card teacher-panel"><h2>📊 درجات الطالبات</h2><p class="muted">هذه البيانات تظهر لكِ فقط داخل لوحة المعلمة.</p><div id="teacherProgressSummary" class="teacher-list"><div class="loading">اضغطي تحديث البيانات لعرض تقدم الطالبات.</div></div><h3>تفاصيل الدرجات</h3><div id="teacherScoresList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
 <div id="family" class="card teacher-panel"><h2>🤝 مشاركات الأسرة</h2><p class="muted">الصور المرسلة من قسم شراكة الأسرة داخل الدروس.</p><div id="teacherFamilyList" class="teacher-list"><div class="loading">اضغطي تحديث البيانات.</div></div><button class="btn" onclick="loadTeacherPrivateData()">تحديث البيانات</button></div>
 </div>
 </section>
@@ -320,7 +329,7 @@ summary::-webkit-details-marker{display:none}
 const SUPABASE_URL = 'https://qkegutmfdbtlunbvrzgt.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_od0E1kpfsZtSCh9Hkj8hLA_ihCiU7xN';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const lessonTitles = {sketch:'الاسكتش',folk:'الزخرفة البدائية والشعبية',textures:'تكوينات وملامس مطبوعة',geometry:'أطبع بوحداتي الهندسية',surfaceprints:'طباعة وحدات ذات ملامس مختلفة',weaving:'النسيج البسيط الملون'};
+const lessonTitles = {sketch:'الاسكتش',folk:'الزخرفة البدائية والشعبية',folkSaudi:'الزخرفة الشعبية السعودية',textures:'تكوينات وملامس مطبوعة',geometry:'أطبع بوحداتي الهندسية',surfaceprints:'طباعة وحدات ذات ملامس مختلفة',weaving:'النسيج البسيط الملون'};
 const TEACHER_ENDPOINT = SUPABASE_URL + '/functions/v1/itqan-teacher';
 function esc(v){return String(v??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
 function publicImageUrl(path){return sb.storage.from('teacher-gallery').getPublicUrl(path).data.publicUrl;}
@@ -574,12 +583,39 @@ async function loadTeacherGalleryLists(){
   }).join('');
 }
 async function teacherDelete(kind,id){if(!confirm('تأكيد الحذف؟'))return;try{await teacherApi({action:kind==='featured'?'delete_featured':'delete_record',id});await loadTeacherGalleryLists();await loadPublicGallery();}catch(e){alert(e.message);}}
+function renderTeacherProgress(scores){
+  const box=document.getElementById('teacherProgressSummary'); if(!box)return;
+  const students=new Map();
+  (scores||[]).forEach(x=>{
+    const studentKey=String(x.student_name||'').trim()+'|'+String(x.class_name||'').trim();
+    if(!String(x.student_name||'').trim())return;
+    if(!students.has(studentKey))students.set(studentKey,{name:x.student_name,className:x.class_name||'',lessons:new Map()});
+    const st=students.get(studentKey), lessonKey=String(x.lesson_id||x.lesson_title||'');
+    const previous=st.lessons.get(lessonKey);
+    if(!previous||new Date(x.created_at||0)>=new Date(previous.created_at||0))st.lessons.set(lessonKey,x);
+  });
+  const rows=[...students.values()].sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+  if(!rows.length){box.innerHTML='<div class="muted">لا يوجد تقدم مسجل بعد. على الطالبة إكمال الاختبار والضغط على «إظهار الدرجة»، ثم اضغطي «تحديث البيانات».</div>';return;}
+  const body=rows.map(st=>{
+    const records=[...st.lessons.values()];
+    const earned=records.reduce((n,x)=>n+(Number(x.score)||0),0), possible=records.reduce((n,x)=>n+(Number(x.total)||0),0);
+    const percent=possible?Math.round(earned*100/possible):0;
+    const grades=records.map(x=>esc(x.lesson_title||lessonTitles[x.lesson_id]||x.lesson_id)+' '+(Number(x.score)||0)+'/'+(Number(x.total)||0)).join('، ');
+    return '<tr><td><b>'+esc(st.name)+'</b><div class="muted">'+esc(st.className)+'</div></td><td>'+records.length+'</td><td>'+earned+'/'+possible+'</td><td>'+percent+'%</td><td>'+grades+'</td></tr>';
+  }).join('');
+  box.innerHTML='<div class="muted">عدد المستفيدات المسجلات: <b>'+rows.length+'</b> · يعرض الملخص أحدث درجة لكل اختبار.</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin-top:10px;text-align:right"><thead><tr><th>الطالبة</th><th>الاختبارات</th><th>الدرجات</th><th>نسبة الإنجاز</th><th>تفصيل الدرجات</th></tr></thead><tbody>'+body+'</tbody></table></div>';
+}
 async function loadTeacherPrivateData(){
-  if(!teacherPass())return; const s=document.getElementById('teacherScoresList'),f=document.getElementById('teacherFamilyList'); if(s)s.innerHTML='<div class="loading">جارٍ التحميل...</div>';if(f)f.innerHTML='<div class="loading">جارٍ التحميل...</div>';
-  try{const d=await teacherApi({action:'list_teacher'});
-    if(s){const normalScores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_')&&!String(x.lesson_id||'').startsWith('feedback_'));s.innerHTML=normalScores.length?normalScores.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b> <span class="student-badge">${esc(x.class_name)}</span><div>${esc(x.lesson_title)} — <b>${x.score}/${x.total}</b></div><div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><button class="danger-btn" onclick="teacherDeletePrivate('score',${x.id})">حذف</button></div>`).join(''):'<div class="muted">لا توجد درجات محفوظة بعد.</div>';}
-    if(f)f.innerHTML=d.family?.length?d.family.map(x=>`<div class="teacher-row"><b>${esc(x.student_name)}</b><div>${esc(x.lesson_title)}</div>${x.signed_url?`<img src="${x.signed_url}" alt="مشاركة الأسرة">`:''}<div class="muted">${new Date(x.created_at).toLocaleString('ar-SA')}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="promoteFamily(this,'${encodeURIComponent(x.student_name)}','${encodeURIComponent(x.lesson_title)}','${encodeURIComponent(x.signed_url||'')}')">⭐ اعرضي في المنصة</button><button class="danger-btn" onclick="teacherDeletePrivate('family',${x.id})">حذف</button></div></div>`).join(''):'<div class="muted">لا توجد مشاركات أسرة بعد.</div>';
-  }catch(e){if(s)s.innerHTML='<div class="muted">'+esc(e.message)+'</div>';if(f)f.innerHTML='<div class="muted">'+esc(e.message)+'</div>';}
+  if(!teacherPass())return;
+  const s=document.getElementById('teacherScoresList'),f=document.getElementById('teacherFamilyList'),p=document.getElementById('teacherProgressSummary');
+  if(s)s.innerHTML='<div class="loading">جارٍ التحميل...</div>';if(f)f.innerHTML='<div class="loading">جارٍ التحميل...</div>';if(p)p.innerHTML='<div class="loading">جارٍ التحميل...</div>';
+  try{
+    const d=await teacherApi({action:'list_teacher'});
+    const normalScores=(d.scores||[]).filter(x=>!String(x.lesson_id||'').startsWith('achievement_eval_')&&!String(x.lesson_id||'').startsWith('feedback_'));
+    renderTeacherProgress(normalScores);
+    if(s)s.innerHTML=normalScores.length?normalScores.map(x=>'<div class="teacher-row"><b>'+esc(x.student_name)+'</b> <span class="student-badge">'+esc(x.class_name)+'</span><div>'+esc(x.lesson_title)+' — <b>'+esc(x.score)+'/'+esc(x.total)+'</b></div><div class="muted">'+new Date(x.created_at).toLocaleString('ar-SA')+'</div><button class="danger-btn" onclick="teacherDeletePrivate(\'score\','+Number(x.id)+')">حذف الدرجة</button></div>').join(''):'<div class="muted">لا توجد درجات محفوظة بعد.</div>';
+    if(f)f.innerHTML=d.family?.length?d.family.map(x=>'<div class="teacher-row"><b>'+esc(x.student_name)+'</b><div>'+esc(x.lesson_title)+'</div>'+(x.signed_url?'<img src="'+esc(x.signed_url)+'" alt="مشاركة الأسرة">':'')+'<div class="muted">'+new Date(x.created_at).toLocaleString('ar-SA')+'</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="promoteFamily(this,\''+encodeURIComponent(x.student_name)+'\',\''+encodeURIComponent(x.lesson_title)+'\',\''+encodeURIComponent(x.signed_url||'')+'\')">⭐ اعرضي في المنصة</button><button class="danger-btn" onclick="teacherDeletePrivate(\'family\','+Number(x.id)+')">حذف</button></div></div>').join(''):'<div class="muted">لا توجد مشاركات أسرة بعد.</div>';
+  }catch(e){if(s)s.innerHTML='<div class="muted">'+esc(e.message)+'</div>';if(f)f.innerHTML='<div class="muted">'+esc(e.message)+'</div>';if(p)p.innerHTML='<div class="muted">'+esc(e.message)+'</div>';}
 }
 async function promoteFamily(btn,nameEncoded,titleEncoded,urlEncoded){
   const name=decodeURIComponent(nameEncoded), title=decodeURIComponent(titleEncoded), url=decodeURIComponent(urlEncoded);
