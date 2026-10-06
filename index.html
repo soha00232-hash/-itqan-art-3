@@ -814,7 +814,7 @@ function renderAchievementRecord(){
 async function renderStarStatus(){
   const el=document.getElementById('starStatus'); if(!el)return;
   const data=getCurrentStudentRecord();
-  if(!data.student){
+  if(!data.student || teacherPass() || visitorMode){
     if(teacherPass()){
       el.innerHTML='<div class="loading">جارٍ تحميل طالبات نجمة إتقان...</div>';
       try{
