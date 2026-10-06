@@ -824,13 +824,13 @@ async function renderStarStatus(){
         for(const x of scores){
           if(Number(x.total)>0 && Number(x.score)===Number(x.total)){
             const key=(x.class_name||'')+'|'+(x.student_name||'');
-            winners[key]=winners[key]||{name:x.student_name,className:x.class_name,count:0};
-            winners[key].count++;
+            winners[key]=winners[key]||{name:x.student_name,className:x.class_name,lessons:new Set()};
+            winners[key].lessons.add(String(x.lesson_id||x.lesson_title||''));
           }
         }
         const rows=Object.values(winners);
         el.innerHTML=rows.length
-          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span><div>⭐ ${x.count} نجمة إتقان</div></div>`).join('')
+          ? '<div style="text-align:center;font-size:56px">⭐</div><h3 style="text-align:center">طالبات نجمة إتقان</h3>'+rows.map(x=>`<div class="teacher-row"><b>${esc(x.name)}</b> <span class="student-badge">${esc(x.className||'')}</span><div>⭐ ${x.lessons.size} نجمة إتقان</div></div>`).join('')
           : '<div style="text-align:center"><div style="font-size:56px">⭐</div><h3>طالبات نجمة إتقان</h3><p class="muted">لا توجد طالبة حصلت على الدرجة الكاملة حتى الآن.</p></div>';
       }catch(e){
         el.innerHTML='<p class="muted">تعذر تحميل بيانات نجمة إتقان الآن.</p>';
